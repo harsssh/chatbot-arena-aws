@@ -16,6 +16,7 @@ Parameters:
     Description: The name of the key pair
 
 Resources:
+  # TODO: アクセスを ALB で受ける
   # TODO: Gradio UI を起動
   GradioUIInstance:
     Type: AWS::EC2::Instance
