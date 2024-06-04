@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: EC2 instance for FastChat Controller
+
+Parameters:
+  PrivateSubnetID:
+    Type: AWS::EC2::Subnet::Id
+    Description: The ID of the Private Subnet
+  ControllerSGID:
+    Type: AWS::EC2::SecurityGroup::Id
+    Description: The ID of the Controller Security Group
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: The name of the Key Pair
+
+Resources:
+  # TODO: Controller を起動
+  ControllerInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      SecurityGroupIds:
+        - !Ref ControllerSGID
+      SubnetId: !Ref PrivateSubnetID
+      ImageId: ami-01bef798938b7644d  # Ubuntu Server 24.04 LTS
+      KeyName: !Ref KeyName
+      Tags:
+        - Key: Name
+          Value: chatbot-arena-controller
+
+Outputs:
+  ControllerIP:
+    Description: Controller IP Address
+    Value: !GetAtt ControllerInstance.PrivateIp

@@ -1,0 +1,24 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Key Pairs for Chatbot Arena infrastructure
+
+Resources:
+  BastionKeyPair:
+    Type: AWS::EC2::KeyPair
+    Properties:
+      KeyName: chatbot-arena-bastion
+      KeyType: ed25519
+
+  ApplicationKeyPair:
+    Type: AWS::EC2::KeyPair
+    Properties:
+      KeyName: chatbot-arena-application
+      KeyType: ed25519
+
+Outputs:
+  BastionKeyPairName:
+    Description: Name of the bastion key pair
+    Value: !Ref BastionKeyPair
+
+  ApplicationKeyPairName:
+    Description: Name of the application key pair
+    Value: !Ref ApplicationKeyPair

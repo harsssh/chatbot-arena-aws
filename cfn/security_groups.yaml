@@ -1,0 +1,133 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Security Groups for Chatbot Arena Infrastructure
+
+Parameters:
+  VPCID:
+    Type: AWS::EC2::VPC::Id
+    Description: The ID of the VPC
+
+Resources:
+  ### Security Group ###
+  ControllerSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: chatbot-arena-controller-sg
+      GroupDescription: Allow traffic for Controller
+      VpcId: !Ref VPCID
+
+  ModelWorkerSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: chatbot-arena-model-worker-sg
+      GroupDescription: Allow traffic for Model Workers
+      VpcId: !Ref VPCID
+
+  GradioUISG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: chatbot-arena-gradio-ui-sg
+      GroupDescription: Allow traffic for Gradio UI
+      VpcId: !Ref VPCID
+
+  BastionSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: chatbot-arena-bastion-sg
+      GroupDescription: Allow traffic for Bastion
+      VpcId: !Ref VPCID
+
+  ### Ingress Rules ###
+  # Internet -> Gradio UI
+  GradioUIIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref GradioUISG
+      IpProtocol: tcp
+      FromPort: 8080
+      ToPort: 8080
+      CidrIp: 0.0.0.0/0
+
+  # Gradio UI -> Controller
+  GradioUIToController:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref ControllerSG
+      IpProtocol: tcp
+      FromPort: 3000
+      ToPort: 3000
+      SourceSecurityGroupId: !Ref GradioUISG
+
+  # Controller -> Model Worker
+  # Allow a range of ports for running multiple models on a single instance
+  ControllerToModelWorker:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref ModelWorkerSG
+      IpProtocol: tcp
+      FromPort: 3001
+      ToPort: 3999
+      SourceSecurityGroupId: !Ref ControllerSG
+
+  # Model Worker -> Controller
+  ModelWorkerToController:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref ControllerSG
+      IpProtocol: tcp
+      FromPort: 3000
+      ToPort: 3000
+      SourceSecurityGroupId: !Ref ModelWorkerSG
+
+  # Internet -> Bastion
+  BastionIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref BastionSG
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      CidrIp: 0.0.0.0/0
+
+  # Bastion -> Controller
+  BastionToController:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref ControllerSG
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      SourceSecurityGroupId: !Ref BastionSG
+
+  # Bastion -> Model Worker
+  BastionToModelWorker:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref ModelWorkerSG
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      SourceSecurityGroupId: !Ref BastionSG
+
+  # Bastion -> Gradio UI
+  BastionToGradioUI:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref GradioUISG
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      SourceSecurityGroupId: !Ref BastionSG
+
+Outputs:
+  ControllerSGID:
+    Description: Security Group ID for Controller
+    Value: !Ref ControllerSG
+  ModelWorkerSGID:
+    Description: Security Group ID for Model Workers
+    Value: !Ref ModelWorkerSG
+  GradioUISGID:
+    Description: Security Group ID for Gradio UI
+    Value: !Ref GradioUISG
+  BastionSGID:
+    Description: Security Group ID for Bastion
+    Value: !Ref BastionSG

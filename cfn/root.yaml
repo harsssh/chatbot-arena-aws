@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Chatbot Arena Infrastructure
+
+Resources:
+  VPCStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./vpc.yaml
+
+  SecurityGroupsStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./security_groups.yaml
+      Parameters:
+        VPCID: !GetAtt VPCStack.Outputs.VPCID
+
+  KeyPairStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./key_pair.yaml
+
+  BastionStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./bastion.yaml
+      Parameters:
+        PublicSubnetID: !GetAtt VPCStack.Outputs.PublicSubnetID
+        BastionSGID: !GetAtt SecurityGroupsStack.Outputs.BastionSGID
+        KeyName: !GetAtt KeyPairStack.Outputs.BastionKeyPairName
+
+  ControllerStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./controller.yaml
+      Parameters:
+        PrivateSubnetID: !GetAtt VPCStack.Outputs.PrivateSubnetID
+        ControllerSGID: !GetAtt SecurityGroupsStack.Outputs.ControllerSGID
+        KeyName: !GetAtt KeyPairStack.Outputs.ApplicationKeyPairName
+
+  ModelWorkersStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./model_workers.yaml
+      Parameters:
+        PrivateSubnetID: !GetAtt VPCStack.Outputs.PrivateSubnetID
+        ModelWorkerSGID: !GetAtt SecurityGroupsStack.Outputs.ModelWorkerSGID
+        ControllerIP: !GetAtt ControllerStack.Outputs.ControllerIP
+        KeyName: !GetAtt KeyPairStack.Outputs.ApplicationKeyPairName
+
+  GradioUIStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./gradio_ui.yaml
+      Parameters:
+        PublicSubnetID: !GetAtt VPCStack.Outputs.PublicSubnetID
+        GradioUISGID: !GetAtt SecurityGroupsStack.Outputs.GradioUISGID
+        ControllerIP: !GetAtt ControllerStack.Outputs.ControllerIP
+        KeyName: !GetAtt KeyPairStack.Outputs.ApplicationKeyPairName

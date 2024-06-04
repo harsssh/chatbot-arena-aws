@@ -1,0 +1,100 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: VPC and Subnets for Chatbot Arena
+
+Resources:
+  ### VPC, Subnet ###
+  ChatbotArenaVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: chatbot-arena-vpc
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref ChatbotArenaVPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Select
+        - 0
+        - Fn::GetAZs: !Ref AWS::Region
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: chatbot-arena-public-subnet
+
+  PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref ChatbotArenaVPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: !Select
+        - 1
+        - Fn::GetAZs: !Ref AWS::Region
+      Tags:
+        - Key: Name
+          Value: chatbot-arena-private-subnet
+
+  ### Network ###
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: chatbot-arena-igw
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref ChatbotArenaVPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref ChatbotArenaVPC
+      Tags:
+        - Key: Name
+          Value: chatbot-arena-public-route-table
+
+  AssociatePublicRouteTable:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      GatewayId: !Ref InternetGateway
+      DestinationCidrBlock: 0.0.0.0/0
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref ChatbotArenaVPC
+      Tags:
+        - Key: Name
+          Value: chatbot-arena-private-route-table
+
+  AssociatePrivateRouteTable:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet
+      RouteTableId: !Ref PrivateRouteTable
+
+Outputs:
+  VPCID:
+    Description: VPC ID
+    Value: !Ref ChatbotArenaVPC
+  PublicSubnetID:
+    Description: Public Subnet ID
+    Value: !Ref PublicSubnet
+  PrivateSubnetID:
+    Description: Private Subnet ID
+    Value: !Ref PrivateSubnet
