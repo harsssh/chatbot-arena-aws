@@ -47,12 +47,12 @@ Resources:
         ControllerIP: !GetAtt ControllerStack.Outputs.ControllerIP
         KeyName: !GetAtt KeyPairStack.Outputs.ApplicationKeyPairName
 
-  GradioUIStack:
+  GradioStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: ./gradio_ui.yaml
+      TemplateURL: ./gradio.yaml
       Parameters:
         PublicSubnetID: !GetAtt VPCStack.Outputs.PublicSubnetID
-        GradioUISGID: !GetAtt SecurityGroupsStack.Outputs.GradioUISGID
+        GradioSGID: !GetAtt SecurityGroupsStack.Outputs.GradioSGID
         ControllerIP: !GetAtt ControllerStack.Outputs.ControllerIP
         KeyName: !GetAtt KeyPairStack.Outputs.ApplicationKeyPairName

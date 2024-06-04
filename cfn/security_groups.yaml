@@ -22,11 +22,11 @@ Resources:
       GroupDescription: Allow traffic for Model Workers
       VpcId: !Ref VPCID
 
-  GradioUISG:
+  GradioSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Sub "gradio-ui-sg-${AWS::StackName}"
-      GroupDescription: Allow traffic for Gradio UI
+      GroupName: !Sub "gradio-sg-${AWS::StackName}"
+      GroupDescription: Allow traffic for Gradio
       VpcId: !Ref VPCID
 
   BastionSG:
@@ -37,25 +37,25 @@ Resources:
       VpcId: !Ref VPCID
 
   ### Ingress Rules ###
-  # Internet -> Gradio UI
-  GradioUIIngress:
+  # Internet -> Gradio
+  GradioIngress:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
-      GroupId: !Ref GradioUISG
+      GroupId: !Ref GradioSG
       IpProtocol: tcp
       FromPort: 8080
       ToPort: 8080
       CidrIp: 0.0.0.0/0
 
-  # Gradio UI -> Controller
-  GradioUIToController:
+  # Gradio -> Controller
+  GradioToController:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
       GroupId: !Ref ControllerSG
       IpProtocol: tcp
       FromPort: 3000
       ToPort: 3000
-      SourceSecurityGroupId: !Ref GradioUISG
+      SourceSecurityGroupId: !Ref GradioSG
 
   # Controller -> Model Worker
   # Allow a range of ports for running multiple models on a single instance
@@ -108,11 +108,11 @@ Resources:
       ToPort: 22
       SourceSecurityGroupId: !Ref BastionSG
 
-  # Bastion -> Gradio UI
-  BastionToGradioUI:
+  # Bastion -> Gradio
+  BastionToGradio:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
-      GroupId: !Ref GradioUISG
+      GroupId: !Ref GradioSG
       IpProtocol: tcp
       FromPort: 22
       ToPort: 22
@@ -125,9 +125,9 @@ Outputs:
   ModelWorkerSGID:
     Description: Security Group ID for Model Workers
     Value: !Ref ModelWorkerSG
-  GradioUISGID:
-    Description: Security Group ID for Gradio UI
-    Value: !Ref GradioUISG
+  GradioSGID:
+    Description: Security Group ID for Gradio
+    Value: !Ref GradioSG
   BastionSGID:
     Description: Security Group ID for Bastion
     Value: !Ref BastionSG

@@ -1,13 +1,13 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: EC2 instance for FastChat Gradio UI
+Description: EC2 instance for FastChat Gradio
 
 Parameters:
   PublicSubnetID:
     Type: AWS::EC2::Subnet::Id
     Description: The ID of the Public Subnet
-  GradioUISGID:
+  GradioSGID:
     Type: AWS::EC2::SecurityGroup::Id
-    Description: The ID of the Gradio UI Security Group
+    Description: The ID of the Gradio Security Group
   ControllerIP:
     Type: String
     Description: The IP Address of the Controller
@@ -17,16 +17,16 @@ Parameters:
 
 Resources:
   # TODO: アクセスを ALB で受ける
-  # TODO: Gradio UI を起動
-  GradioUIInstance:
+  # TODO: Gradio を起動
+  GradioInstance:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: t2.micro
       SecurityGroupIds:
-        - !Ref GradioUISGID
+        - !Ref GradioSGID
       SubnetId: !Ref PublicSubnetID
       ImageId: ami-01bef798938b7644d  # Ubuntu Server 24.04 LTS
       KeyName: !Ref KeyName
       Tags:
         - Key: Name
-          Value: !Sub "gradio-ui-${AWS::StackName}"
+          Value: !Sub "gradio-${AWS::StackName}"
