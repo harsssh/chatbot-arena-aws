@@ -25,7 +25,7 @@ Resources:
       KeyName: !Ref KeyName
       Tags:
         - Key: Name
-          Value: chatbot-arena-controller
+          Value: !Sub "controller-${AWS::StackName}"
 
 Outputs:
   ControllerIP:

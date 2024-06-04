@@ -5,13 +5,13 @@ Resources:
   BastionKeyPair:
     Type: AWS::EC2::KeyPair
     Properties:
-      KeyName: chatbot-arena-bastion
+      KeyName: !Sub "bastion-${AWS::StackName}"
       KeyType: ed25519
 
   ApplicationKeyPair:
     Type: AWS::EC2::KeyPair
     Properties:
-      KeyName: chatbot-arena-application
+      KeyName: !Sub "application-${AWS::StackName}"
       KeyType: ed25519
 
 Outputs:

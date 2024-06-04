@@ -28,4 +28,4 @@ Resources:
       KeyName: !Ref KeyName
       Tags:
         - Key: Name
-          Value: chatbot-arena-gradio-ui
+          Value: !Sub "gradio-ui-${AWS::StackName}"

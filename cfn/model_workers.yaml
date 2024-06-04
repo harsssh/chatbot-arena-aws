@@ -28,4 +28,4 @@ Resources:
       KeyName: !Ref KeyName
       Tags:
         - Key: Name
-          Value: chatbot-arena-model-worker-1
+          Value: !Sub "model-worker-1-${AWS::StackName}"

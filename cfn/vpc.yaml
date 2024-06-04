@@ -11,7 +11,7 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: chatbot-arena-vpc
+          Value: !Sub "vpc-${AWS::StackName}"
 
   PublicSubnet:
     Type: AWS::EC2::Subnet
@@ -24,7 +24,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: chatbot-arena-public-subnet
+          Value: !Sub "public-subnet-${AWS::StackName}"
 
   PrivateSubnet:
     Type: AWS::EC2::Subnet
@@ -36,7 +36,7 @@ Resources:
         - Fn::GetAZs: !Ref AWS::Region
       Tags:
         - Key: Name
-          Value: chatbot-arena-private-subnet
+          Value: !Sub "private-subnet-${AWS::StackName}"
 
   ### Network ###
   InternetGateway:
@@ -44,7 +44,7 @@ Resources:
     Properties:
       Tags:
         - Key: Name
-          Value: chatbot-arena-igw
+          Value: !Sub "igw-${AWS::StackName}"
 
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -58,7 +58,7 @@ Resources:
       VpcId: !Ref ChatbotArenaVPC
       Tags:
         - Key: Name
-          Value: chatbot-arena-public-route-table
+          Value: !Sub "public-route-table-${AWS::StackName}"
 
   AssociatePublicRouteTable:
     Type: AWS::EC2::SubnetRouteTableAssociation
@@ -80,7 +80,7 @@ Resources:
       VpcId: !Ref ChatbotArenaVPC
       Tags:
         - Key: Name
-          Value: chatbot-arena-private-route-table
+          Value: !Sub "private-route-table-${AWS::StackName}"
 
   AssociatePrivateRouteTable:
     Type: AWS::EC2::SubnetRouteTableAssociation

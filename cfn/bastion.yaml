@@ -24,4 +24,4 @@ Resources:
       KeyName: !Ref KeyName
       Tags:
         - Key: Name
-          Value: chatbot-arena-bastion
+          Value: !Sub "bastion-${AWS::StackName}"
