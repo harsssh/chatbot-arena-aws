@@ -1,5 +1,7 @@
 # llmjp-playground
 ## システム構成 (WIP)
+![architecture](assets/architecture.jpg)
+
 - Public Subnet
     - FastChat Gradio Web Server
     - Bastion Host
