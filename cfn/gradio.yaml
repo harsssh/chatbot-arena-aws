@@ -27,6 +27,40 @@ Resources:
       SubnetId: !Ref PublicSubnetID
       ImageId: ami-01bef798938b7644d  # Ubuntu Server 24.04 LTS
       KeyName: !Ref KeyName
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: 64
+            VolumeType: gp2
       Tags:
         - Key: Name
           Value: !Sub "gradio-${AWS::StackName}"
+      # TODO: インストール, 起動スクリプトをよりシンプルに管理したい
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -x
+          apt-get -y update
+          apt-get -y install python3-pip python3-venv
+          python3 -m venv /opt/fschat-env
+          source /opt/fschat-env/bin/activate
+          pip install "fschat[model_worker,webui]" plotly
+          
+          mkdir -p /var/log/fschat
+          chmod 755 /var/log/fschat
+          
+          cat << EOF > /etc/systemd/system/fschat-gradio.service
+          [Unit]
+          Description=FastChat Gradio
+          After=network.target
+          [Service]
+          ExecStart=/opt/fschat-env/bin/python -m fastchat.serve.gradio_web_server_multi \
+            --host 0.0.0.0 --port 8080 --controller-url http://${ControllerIP}:3000
+          Restart=always
+          WorkingDirectory=/var/log/fschat
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+          
+          systemctl daemon-reload
+          systemctl enable fschat-gradio
+          systemctl start fschat-gradio

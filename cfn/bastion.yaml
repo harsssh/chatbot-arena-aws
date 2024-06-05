@@ -22,6 +22,11 @@ Resources:
       SubnetId: !Ref PublicSubnetID
       ImageId: ami-01bef798938b7644d  # Ubuntu Server 24.04 LTS
       KeyName: !Ref KeyName
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: 32
+            VolumeType: gp3
       Tags:
         - Key: Name
           Value: !Sub "bastion-${AWS::StackName}"
