@@ -1,4 +1,4 @@
-# llmjp-playground
+# Chatbot Arena AWS
 ## システム構成 (WIP)
 ![architecture](assets/architecture.jpg)
 
