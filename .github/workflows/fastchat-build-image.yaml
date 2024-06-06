@@ -32,8 +32,7 @@ jobs:
       - name: Build and push API
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: docker/fastchat
           push: true
           provenance: false
-          file: docker/fastchat/Dockerfile
           tags: ${{ env.ECR_REGISTRY }}/fastchat:latest
