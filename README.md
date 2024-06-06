@@ -15,19 +15,8 @@
 - Bastion Host は Public/Private Subnet の各インスタンスに SSH するために使用 (デバッグ用)
 - 最終的には Gradio Web Server も Private Subnet に配置し、ALB で公開したい
 
-## デプロイ方法
-- AWS CLI がインストールされていることを前提とします。
-- 事前に S3 Bucket を作成してください。
-(CloudFormation Template のアップロードに使います。)
-
-プロジェクトルートで以下のようにスクリプトを実行してください。
-```bash
-S3_BUCKET="<bucket_name>" STACK_NAME="<stack_name>" scripts/deploy.sh
-```
-
-スタックを更新する場合は、`scripts/update.sh` を同様に実行してください。
-
-(⚠️ CLI の設定によっては、そのままでは動きません。)
+## デプロイ方法 (WIP)
+- [Rain](https://github.com/aws-cloudformation/rain) の利用を推奨します
 
 ## サーバーへの SSH
 テンプレートで踏み台サーバー、及びその他のサーバー用に 2 種類のキーペアを作成しています。
