@@ -1,0 +1,5 @@
+fschat==0.2.36
+gradio==4.36.0
+plotly==5.22.0
+accelerate==0.30.1
+transformers==4.41.2
