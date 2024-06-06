@@ -1,0 +1,32 @@
+Parameters:
+  ECRRepositoryName:
+    Description: ECR Repository name
+    Type: String
+
+Resources:
+  AttachPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: GetAuthorizationToken
+            Effect: Allow
+            Action:
+              - ecr:GetAuthorizationToken
+            Resource: "*"
+          - Sid: PushImageOnly
+            Effect: Allow
+            Action:
+              - ecr:BatchCheckLayerAvailability
+              - ecr:InitiateLayerUpload
+              - ecr:UploadLayerPart
+              - ecr:CompleteLayerUpload
+              - ecr:PutImage
+            Resource: !Sub arn:aws:ecr:${AWS::Region}:${AWS::AccountId}:repository/${ECRRepositoryName}
+      Roles:
+        - !ImportValue GitHubActionsRoleName
+
+Outputs:
+  ManagedPolicyArn:
+    Value: !Ref AttachPolicy
