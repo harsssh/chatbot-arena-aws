@@ -14,6 +14,9 @@ Parameters:
   KeyName:
     Type: AWS::EC2::KeyPair::KeyName
     Description: The name of the key pair
+  FastChatECRRepositoryName:
+    Type: String
+    Description: ECR Repository name for FastChat
 
 Resources:
   # TODO: アクセスを ALB で受ける

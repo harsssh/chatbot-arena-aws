@@ -11,53 +11,25 @@ Parameters:
   KeyName:
     Type: AWS::EC2::KeyPair::KeyName
     Description: The name of the Key Pair
+  FastChatECRRepositoryName:
+    Type: String
+    Description: ECR Repository name for FastChat
+  ECSCluster:
+    Type: String
+    Description: The ID of the ECS Cluster
+  ECSLogGroup:
+    Type: String
+    Description: The name of the ECS Log Group
 
 Resources:
-  ControllerInstance:
-    Type: AWS::EC2::Instance
+  ControllerTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
     Properties:
-      InstanceType: t2.micro
-      SecurityGroupIds:
-        - !Ref ControllerSGID
-      SubnetId: !Ref PrivateSubnetID
-      ImageId: ami-01bef798938b7644d  # Ubuntu Server 24.04 LTS
-      KeyName: !Ref KeyName
-      BlockDeviceMappings:
-        - DeviceName: /dev/sda1
-          Ebs:
-            VolumeSize: 64
-            VolumeType: gp3
-      Tags:
-        - Key: Name
-          Value: !Sub "controller-${AWS::StackName}"
-      # TODO: インストール, 起動スクリプトをよりシンプルに管理したい
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash -x
-          apt-get -y update
-          apt-get -y install python3-pip python3-venv
-          python3 -m venv /opt/fschat-env
-          source /opt/fschat-env/bin/activate
-          pip install fschat
-          
-          mkdir -p /var/log/fschat
-          chmod 755 /var/log/fschat
-          
-          cat << EOF > /etc/systemd/system/fschat-controller.service
-          [Unit]
-          Description=FastChat Controller
-          After=network.target
-          [Service]
-          ExecStart=/opt/fschat-env/bin/python -m fastchat.serve.controller --host 0.0.0.0 --port 3000
-          Restart=always
-          WorkingDirectory=/var/log/fschat
-          [Install]
-          WantedBy=multi-user.target
-          EOF
-          
-          systemctl daemon-reload
-          systemctl enable fschat-controller
-          systemctl start fschat-controller
+      RequiresCompatibilities:
+        - FARGATE
+      Cpu: 2048 # 2 vCPU
+      Memory: 4096 # 4GB
+      NetworkMode: awsvpc
 
 Outputs:
   ControllerIP:

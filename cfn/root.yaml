@@ -1,6 +1,12 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Chatbot Arena Infrastructure
 
+Parameters:
+  FastChatECRRepositoryName:
+    Type: String
+    Description: ECR Repository name for FastChat
+    Default: fastchat
+
 Resources:
   VPCStack:
     Type: AWS::CloudFormation::Stack
@@ -14,45 +20,18 @@ Resources:
       Parameters:
         VPCID: !GetAtt VPCStack.Outputs.VPCID
 
-  KeyPairStack:
+  ClusterStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: ./key_pair.yaml
-
-  BastionStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: ./bastion.yaml
+      TemplateURL: ./cluster.yaml
       Parameters:
+        VPCID: !GetAtt VPCStack.Outputs.VPCID
         PublicSubnetID: !GetAtt VPCStack.Outputs.PublicSubnetID
-        BastionSGID: !GetAtt SecurityGroupsStack.Outputs.BastionSGID
-        KeyName: !GetAtt KeyPairStack.Outputs.BastionKeyPairName
-
-  ControllerStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: ./controller.yaml
-      Parameters:
+        PublicSubnet2ID: !GetAtt VPCStack.Outputs.PublicSubnet2ID
         PrivateSubnetID: !GetAtt VPCStack.Outputs.PrivateSubnetID
+        PrivateSubnet2ID: !GetAtt VPCStack.Outputs.PrivateSubnet2ID
+        FastChatECRRepositoryName: !Ref FastChatECRRepositoryName
         ControllerSGID: !GetAtt SecurityGroupsStack.Outputs.ControllerSGID
-        KeyName: !GetAtt KeyPairStack.Outputs.ApplicationKeyPairName
-
-  ModelWorkersStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: ./model_workers.yaml
-      Parameters:
-        PrivateSubnetID: !GetAtt VPCStack.Outputs.PrivateSubnetID
-        ModelWorkerSGID: !GetAtt SecurityGroupsStack.Outputs.ModelWorkerSGID
-        ControllerIP: !GetAtt ControllerStack.Outputs.ControllerIP
-        KeyName: !GetAtt KeyPairStack.Outputs.ApplicationKeyPairName
-
-  GradioStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: ./gradio.yaml
-      Parameters:
-        PublicSubnetID: !GetAtt VPCStack.Outputs.PublicSubnetID
         GradioSGID: !GetAtt SecurityGroupsStack.Outputs.GradioSGID
-        ControllerIP: !GetAtt ControllerStack.Outputs.ControllerIP
-        KeyName: !GetAtt KeyPairStack.Outputs.ApplicationKeyPairName
+        ControllerALBSGID: !GetAtt SecurityGroupsStack.Outputs.ControllerALBSGID
+        GradioALBSGID: !GetAtt SecurityGroupsStack.Outputs.GradioALBSGID

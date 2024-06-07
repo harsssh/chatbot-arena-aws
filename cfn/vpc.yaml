@@ -24,7 +24,20 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub "public-subnet-${AWS::StackName}"
+          Value: !Sub "public-subnet-1-${AWS::StackName}"
+
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref ChatbotArenaVPC
+      CidrBlock: 10.0.3.0/24
+      AvailabilityZone: !Select
+        - 1
+        - Fn::GetAZs: !Ref AWS::Region
+      MapPublicIpOnLaunch: true
+      Tags:
+          - Key: Name
+            Value: !Sub "public-subnet-2-${AWS::StackName}"
 
   PrivateSubnet:
     Type: AWS::EC2::Subnet
@@ -32,11 +45,23 @@ Resources:
       VpcId: !Ref ChatbotArenaVPC
       CidrBlock: 10.0.2.0/24
       AvailabilityZone: !Select
-        - 1
+        - 0
         - Fn::GetAZs: !Ref AWS::Region
       Tags:
         - Key: Name
-          Value: !Sub "private-subnet-${AWS::StackName}"
+          Value: !Sub "private-subnet-1-${AWS::StackName}"
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref ChatbotArenaVPC
+      CidrBlock: 10.0.4.0/24
+      AvailabilityZone: !Select
+          - 1
+          - Fn::GetAZs: !Ref AWS::Region
+      Tags:
+        - Key: Name
+          Value: !Sub "private-subnet-2-${AWS::StackName}"
 
   ### Network ###
   InternetGateway:
@@ -81,6 +106,13 @@ Resources:
       SubnetId: !Ref PublicSubnet
       RouteTableId: !Ref PublicRouteTable
 
+  # Load Balancer 用に別 AZ の Public Subnet が必要
+  AssociatePublicRouteTable2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref PublicRouteTable
+
   PublicRoute:
     Type: AWS::EC2::Route
     DependsOn: AttachGateway
@@ -103,6 +135,12 @@ Resources:
       SubnetId: !Ref PrivateSubnet
       RouteTableId: !Ref PrivateRouteTable
 
+  AssociatePrivateRouteTable2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet2
+      RouteTableId: !Ref PrivateRouteTable
+
   PrivateRoute:
     Type: AWS::EC2::Route
     DependsOn: AttachGateway
@@ -118,6 +156,12 @@ Outputs:
   PublicSubnetID:
     Description: Public Subnet ID
     Value: !Ref PublicSubnet
+  PublicSubnet2ID:
+    Description: Public Subnet 2 ID
+    Value: !Ref PublicSubnet2
   PrivateSubnetID:
     Description: Private Subnet ID
     Value: !Ref PrivateSubnet
+  PrivateSubnet2ID:
+    Description: Private Subnet 2 ID
+    Value: !Ref PrivateSubnet2
