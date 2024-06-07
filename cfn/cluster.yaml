@@ -199,6 +199,7 @@ Resources:
             - !Ref ControllerSGID
           Subnets:
             - !Ref PrivateSubnetID
+            - !Ref PrivateSubnet2ID
       LoadBalancers:
         - ContainerName: fastchat-controller
           ContainerPort: 3000
@@ -219,6 +220,7 @@ Resources:
             - !Ref GradioSGID
           Subnets:
             - !Ref PrivateSubnetID
+            - !Ref PrivateSubnet2ID
       LoadBalancers:
         - ContainerName: fastchat-gradio
           ContainerPort: 8080
