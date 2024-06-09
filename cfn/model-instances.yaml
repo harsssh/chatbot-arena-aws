@@ -8,9 +8,9 @@ Parameters:
     Type: AWS::EC2::Subnet::Id
     Description: The ID of the Private Subnet
   NeuronAMI:
-    Type: AWS::EC2::Image::Id
-    Default: ami-07d8b3d7e977df17c
-    Description: Deep Learning AMI Neuron (Ubuntu 22.04) 20240603
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/neuron/dlami/multi-framework/ubuntu-22.04
+    Description: The Neuron AMI
 
 # Fn::ForEach では TemplateURL が展開されなかったため、個別に定義
 Resources:
