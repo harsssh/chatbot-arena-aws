@@ -1,5 +1,12 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Chatbot Arena Infrastructure
+Transform: AWS::LanguageExtensions
+
+Parameters:
+  AmazonLinux2AMI:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+    Description: The Amazon Linux 2 AMI
 
 Resources:
   VPCStack:
@@ -17,17 +24,37 @@ Resources:
   ControllerStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: ./controller.yaml
+      TemplateURL: ./instance.yaml
       Parameters:
-        ControllerSGId: !GetAtt SecurityGroupStack.Outputs.ControllerSGId
-        PrivateSubnetId: !GetAtt VPCStack.Outputs.PrivateSubnetId
+        SGId: !GetAtt SecurityGroupStack.Outputs.ControllerSGId
+        SubnetId: !GetAtt VPCStack.Outputs.PrivateSubnetId
+        ImageId: !Ref AmazonLinux2AMI
+        InstanceType: t2.medium
+        BlockDeviceName: "/dev/xvda"
+        VolumeSize: 64
+        VolumeType: gp2
+        TagName: "controller"
 
   GradioStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: ./gradio.yaml
+      TemplateURL: ./instance.yaml
       Parameters:
-        GradioSGId: !GetAtt SecurityGroupStack.Outputs.GradioSGId
+        SGId: !GetAtt SecurityGroupStack.Outputs.GradioSGId
+        SubnetId: !GetAtt VPCStack.Outputs.PrivateSubnetId
+        ImageId: !Ref AmazonLinux2AMI
+        InstanceType: t2.medium
+        BlockDeviceName: "/dev/xvda"
+        VolumeSize: 64
+        VolumeType: gp2
+        TagName: "gradio"
+
+  ModelInstanceStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./model-instances.yaml
+      Parameters:
+        ModelSGId: !GetAtt SecurityGroupStack.Outputs.ModelSGId
         PrivateSubnetId: !GetAtt VPCStack.Outputs.PrivateSubnetId
 
   LoadBalancerStack:

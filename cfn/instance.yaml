@@ -1,0 +1,82 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  SGId:
+    Type: AWS::EC2::SecurityGroup::Id
+    Description: The ID of the Security Group
+  SubnetId:
+    Type: AWS::EC2::Subnet::Id
+    Description: The ID of the Subnet
+  ImageId:
+    Type: AWS::EC2::Image::Id
+    Description: The ID of the AMI
+  InstanceType:
+    Type: String
+    Description: The type of the instance
+  BlockDeviceName:
+    Type: String
+    Description: The name of the block device
+  VolumeSize:
+    Type: Number
+    Description: The size of the volume
+  VolumeType:
+    Type: String
+    Description: The type of the volume
+  TagName:
+    Type: String
+    Description: The name of the instance
+    Default: "instance"
+
+Resources:
+  Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      SecurityGroupIds:
+        - !Ref SGId
+      SubnetId: !Ref SubnetId
+      ImageId: !Ref ImageId
+      IamInstanceProfile: !Ref InstanceProfile
+      BlockDeviceMappings:
+        - DeviceName: !Ref BlockDeviceName
+          Ebs:
+            VolumeSize: !Ref VolumeSize
+            VolumeType: !Ref VolumeType
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          amazon-linux-extras install -y docker
+          systemctl start docker
+          systemctl enable docker
+          usermod -a -G docker ec2-user
+      Tags:
+        - Key: Name
+          Value: !Join ['-', [!Ref TagName, !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
+
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref InstanceRole
+
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+
+Outputs:
+  InstanceId:
+    Description: "Instance ID"
+    Value: !Ref Instance
+  InstancePrivateDNS:
+    Description: "Private DNS"
+    Value: !GetAtt Instance.PrivateDnsName

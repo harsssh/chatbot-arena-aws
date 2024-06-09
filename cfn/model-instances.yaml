@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  ModelSGId:
+    Type: AWS::EC2::SecurityGroup::Id
+    Description: The ID of the Model Security Group
+  PrivateSubnetId:
+    Type: AWS::EC2::Subnet::Id
+    Description: The ID of the Private Subnet
+  NeuronAMI:
+    Type: AWS::EC2::Image::Id
+    Default: ami-07d8b3d7e977df17c
+    Description: Deep Learning AMI Neuron (Ubuntu 22.04) 20240603
+
+# Fn::ForEach では TemplateURL が展開されなかったため、個別に定義
+Resources:
+  ModelInstance1:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./instance.yaml
+      Parameters:
+        SGId: !Ref ModelSGId
+        SubnetId: !Ref PrivateSubnetId
+        ImageId: !Ref NeuronAMI
+        InstanceType: inf2.24xlarge
+        BlockDeviceName: "/dev/sda1"
+        VolumeSize: 512
+        VolumeType: gp3
+        TagName: !Sub "model-1"

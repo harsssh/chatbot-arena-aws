@@ -31,6 +31,18 @@ Resources:
           ToPort: 8080
           SourceSecurityGroupId: !Ref GradioALBSG
 
+  ModelSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub "model-sg-${AWS::StackName}"
+      GroupDescription: Allow traffic for Model
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3001
+          ToPort: 3999
+          SourceSecurityGroupId: !Ref ControllerSG
+
   GradioALBSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -57,3 +69,6 @@ Outputs:
   GradioALBSGId:
     Description: Security Group ID for Gradio ALB
     Value: !Ref GradioALBSG
+  ModelSGId:
+    Description: Security Group ID for Model
+    Value: !Ref ModelSG
