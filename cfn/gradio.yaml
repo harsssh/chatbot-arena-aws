@@ -1,69 +1,68 @@
-AWSTemplateFormatVersion: '2010-09-09'
-Description: EC2 instance for FastChat Gradio
+AWSTemplateFormatVersion: "2010-09-09"
 
 Parameters:
-  PublicSubnetID:
-    Type: AWS::EC2::Subnet::Id
-    Description: The ID of the Public Subnet
-  GradioSGID:
+  GradioSGId:
     Type: AWS::EC2::SecurityGroup::Id
-    Description: The ID of the Gradio Security Group
-  ControllerIP:
-    Type: String
-    Description: The IP Address of the Controller
-  KeyName:
-    Type: AWS::EC2::KeyPair::KeyName
-    Description: The name of the key pair
-  FastChatECRRepositoryName:
-    Type: String
-    Description: ECR Repository name for FastChat
+    Description: The ID of the Controller Security Group
+  PrivateSubnetId:
+    Type: AWS::EC2::Subnet::Id
+    Description: The ID of the Private Subnet
+  AmazonLinux2AMI:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+    Description: The Amazon Linux 2 AMI
 
 Resources:
-  # TODO: アクセスを ALB で受ける
-  # TODO: Gradio を起動
   GradioInstance:
     Type: AWS::EC2::Instance
     Properties:
-      InstanceType: t2.micro
+      InstanceType: t2.medium
       SecurityGroupIds:
-        - !Ref GradioSGID
-      SubnetId: !Ref PublicSubnetID
-      ImageId: ami-01bef798938b7644d  # Ubuntu Server 24.04 LTS
-      KeyName: !Ref KeyName
+        - !Ref GradioSGId
+      SubnetId: !Ref PrivateSubnetId
+      ImageId: !Ref AmazonLinux2AMI
+      IamInstanceProfile: !Ref GradioInstanceProfile
       BlockDeviceMappings:
-        - DeviceName: /dev/sda1
+        - DeviceName: "/dev/xvda"
           Ebs:
             VolumeSize: 64
             VolumeType: gp2
-      Tags:
-        - Key: Name
-          Value: !Sub "gradio-${AWS::StackName}"
-      # TODO: インストール, 起動スクリプトをよりシンプルに管理したい
       UserData:
         Fn::Base64: !Sub |
-          #!/bin/bash -x
-          apt-get -y update
-          apt-get -y install python3-pip python3-venv
-          python3 -m venv /opt/fschat-env
-          source /opt/fschat-env/bin/activate
-          pip install "fschat[model_worker,webui]" plotly
-          
-          mkdir -p /var/log/fschat
-          chmod 755 /var/log/fschat
-          
-          cat << EOF > /etc/systemd/system/fschat-gradio.service
-          [Unit]
-          Description=FastChat Gradio
-          After=network.target
-          [Service]
-          ExecStart=/opt/fschat-env/bin/python -m fastchat.serve.gradio_web_server_multi \
-            --host 0.0.0.0 --port 8080 --controller-url http://${ControllerIP}:3000
-          Restart=always
-          WorkingDirectory=/var/log/fschat
-          [Install]
-          WantedBy=multi-user.target
-          EOF
-          
-          systemctl daemon-reload
-          systemctl enable fschat-gradio
-          systemctl start fschat-gradio
+          #!/bin/bash -xe
+          amazon-linux-extras install -y docker
+          systemctl start docker
+          systemctl enable docker
+          usermod -a -G docker ec2-user
+      Tags:
+        - Key: Name
+          Value: !Join ['-', ['gradio', !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
+
+  GradioInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref ControllerInstanceRole
+
+  ControllerInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+
+Outputs:
+  GradioInstanceId:
+    Description: The ID of the Gradio Instance
+    Value: !Ref GradioInstance
+
+  GradioInstancePrivateDNS:
+    Description: The Private DNS of the Gradio Instance
+    Value: !GetAtt GradioInstance.PrivateDnsName

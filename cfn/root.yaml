@@ -1,48 +1,41 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Chatbot Arena Infrastructure
 
-Parameters:
-  FastChatECRRepositoryName:
-    Type: String
-    Description: ECR Repository name for FastChat
-    Default: fastchat
-
 Resources:
   VPCStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: ./vpc.yaml
 
-  SecurityGroupsStack:
+  SecurityGroupStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: ./security-groups.yaml
+      TemplateURL: ./security-group.yaml
       Parameters:
-        VPCID: !GetAtt VPCStack.Outputs.VPCID
+        VpcId: !GetAtt VPCStack.Outputs.VpcId
 
-  LoadBalancersStack:
+  ControllerStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: ./load-balancers.yaml
+      TemplateURL: ./controller.yaml
       Parameters:
-        VPCID: !GetAtt VPCStack.Outputs.VPCID
-        PublicSubnetID: !GetAtt VPCStack.Outputs.PublicSubnetID
-        PublicSubnet2ID: !GetAtt VPCStack.Outputs.PublicSubnet2ID
-        PrivateSubnetID: !GetAtt VPCStack.Outputs.PrivateSubnetID
-        PrivateSubnet2ID: !GetAtt VPCStack.Outputs.PrivateSubnet2ID
-        ControllerALBSGID: !GetAtt SecurityGroupsStack.Outputs.ControllerALBSGID
-        GradioALBSGID: !GetAtt SecurityGroupsStack.Outputs.GradioALBSGID
+        ControllerSGId: !GetAtt SecurityGroupStack.Outputs.ControllerSGId
+        PrivateSubnetId: !GetAtt VPCStack.Outputs.PrivateSubnetId
 
-  ClusterStack:
+  GradioStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: ./cluster.yaml
+      TemplateURL: ./gradio.yaml
       Parameters:
-        PrivateSubnetID: !GetAtt VPCStack.Outputs.PrivateSubnetID
-        PrivateSubnet2ID: !GetAtt VPCStack.Outputs.PrivateSubnet2ID
-        FastChatECRRepositoryName: !Ref FastChatECRRepositoryName
-        ControllerSGID: !GetAtt SecurityGroupsStack.Outputs.ControllerSGID
-        GradioSGID: !GetAtt SecurityGroupsStack.Outputs.GradioSGID
-        ControllerTargetGroupArn: !GetAtt LoadBalancersStack.Outputs.ControllerTargetGroupArn
-        GradioTargetGroupArn: !GetAtt LoadBalancersStack.Outputs.GradioTargetGroupArn
-        ControllerLoadBalancerDNSName: !GetAtt LoadBalancersStack.Outputs.ControllerLoadBalancerDNSName
+        GradioSGId: !GetAtt SecurityGroupStack.Outputs.GradioSGId
+        PrivateSubnetId: !GetAtt VPCStack.Outputs.PrivateSubnetId
+
+  LoadBalancerStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./load-balancer.yaml
+      Parameters:
+        VpcId: !GetAtt VPCStack.Outputs.VpcId
+        PublicSubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
+        PublicSubnet2Id: !GetAtt VPCStack.Outputs.PublicSubnet2Id
+        GradioALBSGId: !GetAtt SecurityGroupStack.Outputs.GradioALBSGId

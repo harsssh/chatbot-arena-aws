@@ -1,5 +1,4 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: VPC and Subnets for Chatbot Arena
 
 Resources:
   ### VPC, Subnet ###
@@ -106,7 +105,6 @@ Resources:
       SubnetId: !Ref PublicSubnet
       RouteTableId: !Ref PublicRouteTable
 
-  # Load Balancer 用に別 AZ の Public Subnet が必要
   AssociatePublicRouteTable2:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
@@ -150,18 +148,18 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
 
 Outputs:
-  VPCID:
+  VpcId:
     Description: VPC ID
     Value: !Ref ChatbotArenaVPC
-  PublicSubnetID:
+  PublicSubnetId:
     Description: Public Subnet ID
     Value: !Ref PublicSubnet
-  PublicSubnet2ID:
+  PublicSubnet2Id:
     Description: Public Subnet 2 ID
     Value: !Ref PublicSubnet2
-  PrivateSubnetID:
+  PrivateSubnetId:
     Description: Private Subnet ID
     Value: !Ref PrivateSubnet
-  PrivateSubnet2ID:
+  PrivateSubnet2Id:
     Description: Private Subnet 2 ID
     Value: !Ref PrivateSubnet2

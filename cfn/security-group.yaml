@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: The ID of the VPC
+
+Resources:
+  ### Security Group ###
+  ControllerSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub "controller-sg-${AWS::StackName}"
+      GroupDescription: Allow traffic for Controller
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3000
+          ToPort: 3000
+          SourceSecurityGroupId: !Ref GradioSG
+
+  GradioSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub "gradio-sg-${AWS::StackName}"
+      GroupDescription: Allow traffic for Gradio
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          SourceSecurityGroupId: !Ref GradioALBSG
+
+  GradioALBSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub "gradio-alb-sg-${AWS::StackName}"
+      GroupDescription: Allow traffic for Gradio ALB
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+
+Outputs:
+  ControllerSGId:
+    Description: Security Group ID for Controller
+    Value: !Ref ControllerSG
+  GradioSGId:
+    Description: Security Group ID for Gradio
+    Value: !Ref GradioSG
+  GradioALBSGId:
+    Description: Security Group ID for Gradio ALB
+    Value: !Ref GradioALBSG
