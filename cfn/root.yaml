@@ -16,22 +16,33 @@ Resources:
   SecurityGroupsStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: ./security_groups.yaml
+      TemplateURL: ./security-groups.yaml
       Parameters:
         VPCID: !GetAtt VPCStack.Outputs.VPCID
 
-  ClusterStack:
+  LoadBalancersStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: ./cluster.yaml
+      TemplateURL: ./load-balancers.yaml
       Parameters:
         VPCID: !GetAtt VPCStack.Outputs.VPCID
         PublicSubnetID: !GetAtt VPCStack.Outputs.PublicSubnetID
         PublicSubnet2ID: !GetAtt VPCStack.Outputs.PublicSubnet2ID
         PrivateSubnetID: !GetAtt VPCStack.Outputs.PrivateSubnetID
         PrivateSubnet2ID: !GetAtt VPCStack.Outputs.PrivateSubnet2ID
+        ControllerALBSGID: !GetAtt SecurityGroupsStack.Outputs.ControllerALBSGID
+        GradioALBSGID: !GetAtt SecurityGroupsStack.Outputs.GradioALBSGID
+
+  ClusterStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./cluster.yaml
+      Parameters:
+        PrivateSubnetID: !GetAtt VPCStack.Outputs.PrivateSubnetID
+        PrivateSubnet2ID: !GetAtt VPCStack.Outputs.PrivateSubnet2ID
         FastChatECRRepositoryName: !Ref FastChatECRRepositoryName
         ControllerSGID: !GetAtt SecurityGroupsStack.Outputs.ControllerSGID
         GradioSGID: !GetAtt SecurityGroupsStack.Outputs.GradioSGID
-        ControllerALBSGID: !GetAtt SecurityGroupsStack.Outputs.ControllerALBSGID
-        GradioALBSGID: !GetAtt SecurityGroupsStack.Outputs.GradioALBSGID
+        ControllerTargetGroupArn: !GetAtt LoadBalancersStack.Outputs.ControllerTargetGroupArn
+        GradioTargetGroupArn: !GetAtt LoadBalancersStack.Outputs.GradioTargetGroupArn
+        ControllerLoadBalancerDNSName: !GetAtt LoadBalancersStack.Outputs.ControllerLoadBalancerDNSName

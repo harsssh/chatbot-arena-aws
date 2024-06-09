@@ -1,15 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
 Parameters:
-  VPCID:
-    Type: AWS::EC2::VPC::Id
-    Description: The ID of the VPC
-  PublicSubnetID:
-    Type: AWS::EC2::Subnet::Id
-    Description: The ID of the Public Subnet
-  PublicSubnet2ID:
-    Type: AWS::EC2::Subnet::Id
-    Description: The ID of the Public Subnet 2
   PrivateSubnetID:
     Type: AWS::EC2::Subnet::Id
     Description: The ID of the Private Subnet
@@ -19,18 +10,21 @@ Parameters:
   FastChatECRRepositoryName:
     Type: String
     Description: ECR Repository name for FastChat
-  ControllerALBSGID:
-    Type: AWS::EC2::SecurityGroup::Id
-    Description: The ID of the Controller ALB Security Group
-  GradioALBSGID:
-    Type: AWS::EC2::SecurityGroup::Id
-    Description: The ID of the Gradio ALB Security Group
   ControllerSGID:
     Type: AWS::EC2::SecurityGroup::Id
     Description: The ID of the Controller Security Group
   GradioSGID:
     Type: AWS::EC2::SecurityGroup::Id
     Description: The ID of the Gradio Security Group
+  ControllerTargetGroupArn:
+    Type: String
+    Description: The ARN of the Controller Target Group
+  GradioTargetGroupArn:
+    Type: String
+    Description: The ARN of the Gradio Target Group
+  ControllerLoadBalancerDNSName:
+    Type: String
+    Description: The DNS Name of the Controller Load Balancer
 
 Resources:
   ### Common ###
@@ -58,75 +52,6 @@ Resources:
             Action: sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-
-  ### Target Group ###
-  ControllerTargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      Name: controller-tg
-      Port: 3000
-      Protocol: HTTP
-      TargetType: ip
-      VpcId: !Ref VPCID
-      HealthCheckPath: /test_connection
-
-  GradioTargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      Name: gradio-tg
-      Port: 8080
-      Protocol: HTTP
-      TargetType: ip
-      VpcId: !Ref VPCID
-
-  ### Load Balancer ###
-  ControllerLoadBalancer:
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-    Properties:
-      Name: controller-lb
-      Scheme: internal
-      Subnets:
-        - !Ref PrivateSubnetID
-        - !Ref PrivateSubnet2ID
-      SecurityGroups:
-        - !Ref ControllerALBSGID
-      Tags:
-        - Key: Name
-          Value: !Sub "controller-lb-${AWS::StackName}"
-
-  ControllerListener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      DefaultActions:
-        - Type: forward
-          TargetGroupArn: !Ref ControllerTargetGroup
-      LoadBalancerArn: !Ref ControllerLoadBalancer
-      Port: 80
-      Protocol: HTTP
-
-  GradioLoadBalancer:
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-    Properties:
-      Name: gradio-lb
-      Scheme: internet-facing
-      Subnets:
-        - !Ref PublicSubnetID
-        - !Ref PublicSubnet2ID
-      SecurityGroups:
-        - !Ref GradioALBSGID
-      Tags:
-        - Key: Name
-          Value: !Sub "gradio-lb-${AWS::StackName}"
-
-  GradioListener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      DefaultActions:
-        - Type: forward
-          TargetGroupArn: !Ref GradioTargetGroup
-      LoadBalancerArn: !Ref GradioLoadBalancer
-      Port: 80
-      Protocol: HTTP
 
   ### Task Definition ###
   ControllerTaskDefinition:
@@ -181,12 +106,11 @@ Resources:
               awslogs-group: !Ref ECSLogGroup
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: gradio
-          Command: ["-m", "fastchat.serve.gradio_web_server_multi", "--host", "0.0.0.0", "--port", "8080", "--controller-url", !Sub "http://${ControllerLoadBalancer.DNSName}"]
+          Command: ["-m", "fastchat.serve.gradio_web_server_multi", "--host", "0.0.0.0", "--port", "8080", "--controller-url", !Sub "http://${ControllerLoadBalancerDNSName}"]
 
   ### Service ###
   ControllerService:
     Type: AWS::ECS::Service
-    DependsOn: ControllerListener
     Properties:
       Cluster: !Ref ECSCluster
       DesiredCount: 1
@@ -203,11 +127,10 @@ Resources:
       LoadBalancers:
         - ContainerName: fastchat-controller
           ContainerPort: 3000
-          TargetGroupArn: !Ref ControllerTargetGroup
+          TargetGroupArn: !Ref ControllerTargetGroupArn
 
   GradioService:
     Type: AWS::ECS::Service
-    DependsOn: GradioListener
     Properties:
       Cluster: !Ref ECSCluster
       DesiredCount: 1
@@ -224,4 +147,4 @@ Resources:
       LoadBalancers:
         - ContainerName: fastchat-gradio
           ContainerPort: 8080
-          TargetGroupArn: !Ref GradioTargetGroup
+          TargetGroupArn: !Ref GradioTargetGroupArn
