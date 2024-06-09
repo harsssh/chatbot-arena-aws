@@ -1,0 +1,64 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index c5db016c..b1943cc2 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -3,7 +3,7 @@
+ requires = [
+     "ninja",
+     "packaging",
+-    "setuptools >= 49.4.0",
++    "setuptools == 69.5.1",
+     "torch == 2.1.2",
+     "wheel",
+ ]
+diff --git a/requirements-neuron.txt b/requirements-neuron.txt
+index 858472c2..b22fd2bc 100644
+--- a/requirements-neuron.txt
++++ b/requirements-neuron.txt
+@@ -7,3 +7,5 @@ fastapi
+ uvicorn[standard]
+ pydantic >= 2.0  # Required for OpenAI server.
+ prometheus_client >= 0.18.0
++ray
++outlines
+diff --git a/setup.py b/setup.py
+index 745b5a9b..3a073038 100644
+--- a/setup.py
++++ b/setup.py
+@@ -33,6 +33,7 @@ def _is_hip() -> bool:
+ 
+ 
+ def _is_neuron() -> bool:
++    return True
+     torch_neuronx_installed = True
+     try:
+         subprocess.run(["neuron-ls"], capture_output=True, check=True)
+diff --git a/vllm/core/scheduler.py b/vllm/core/scheduler.py
+index 5e7cc309..e4468caa 100644
+--- a/vllm/core/scheduler.py
++++ b/vllm/core/scheduler.py
+@@ -237,7 +237,7 @@ class Scheduler:
+                 # exceed the maximum number of sequences.
+                 num_new_seqs = seq_group.get_max_num_running_seqs()
+                 if (num_curr_seqs + num_new_seqs >
+-                        self.scheduler_config.max_num_seqs):
++                        self.scheduler_config.max_num_seqs - 1):
+                     break
+ 
+                 num_paddings = num_batched_tokens - sum(new_seq_lens)
+diff --git a/vllm/engine/arg_utils.py b/vllm/engine/arg_utils.py
+index c01e7311..d1aa4a50 100644
+--- a/vllm/engine/arg_utils.py
++++ b/vllm/engine/arg_utils.py
+@@ -171,7 +171,7 @@ class EngineArgs:
+         parser.add_argument('--block-size',
+                             type=int,
+                             default=EngineArgs.block_size,
+-                            choices=[8, 16, 32, 128],
++                            #choices=[8, 16, 32, 128],
+                             help='token block size')
+         parser.add_argument('--seed',
+                             type=int,
+diff --git a/vllm/model_executor/models/neuron/__init__.py b/vllm/model_executor/models/neuron/__init__.py
+new file mode 100644
+index 00000000..e69de29b
