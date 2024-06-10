@@ -27,7 +27,7 @@ Resources:
       TemplateURL: ./instance.yaml
       Parameters:
         SGId: !GetAtt SecurityGroupStack.Outputs.ControllerSGId
-        SubnetId: !GetAtt VPCStack.Outputs.PrivateSubnetId
+        SubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
         ImageId: !Ref AmazonLinux2AMI
         InstanceType: t2.medium
         BlockDeviceName: "/dev/xvda"
@@ -41,7 +41,7 @@ Resources:
       TemplateURL: ./instance.yaml
       Parameters:
         SGId: !GetAtt SecurityGroupStack.Outputs.GradioSGId
-        SubnetId: !GetAtt VPCStack.Outputs.PrivateSubnetId
+        SubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
         ImageId: !Ref AmazonLinux2AMI
         InstanceType: t2.medium
         BlockDeviceName: "/dev/xvda"
@@ -55,7 +55,7 @@ Resources:
       TemplateURL: ./model-instances.yaml
       Parameters:
         ModelSGId: !GetAtt SecurityGroupStack.Outputs.ModelSGId
-        PrivateSubnetId: !GetAtt VPCStack.Outputs.PrivateSubnetId
+        SubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
 
   LoadBalancerStack:
     Type: AWS::CloudFormation::Stack

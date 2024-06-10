@@ -4,12 +4,12 @@ Parameters:
   ModelSGId:
     Type: AWS::EC2::SecurityGroup::Id
     Description: The ID of the Model Security Group
-  PrivateSubnetId:
+  SubnetId:
     Type: AWS::EC2::Subnet::Id
-    Description: The ID of the Private Subnet
+    Description: The ID of the Subnet
   NeuronAMI:
     Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
-    Default: /aws/service/neuron/dlami/multi-framework/ubuntu-22.04
+    Default: /aws/service/neuron/dlami/multi-framework/ubuntu-22.04/latest/image_id
     Description: The Neuron AMI
 
 # Fn::ForEach では TemplateURL が展開されなかったため、個別に定義
@@ -20,7 +20,7 @@ Resources:
       TemplateURL: ./instance.yaml
       Parameters:
         SGId: !Ref ModelSGId
-        SubnetId: !Ref PrivateSubnetId
+        SubnetId: !Ref SubnetId
         ImageId: !Ref NeuronAMI
         InstanceType: inf2.24xlarge
         BlockDeviceName: "/dev/sda1"
