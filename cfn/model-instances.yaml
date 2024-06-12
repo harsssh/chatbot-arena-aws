@@ -11,6 +11,9 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
     Default: /aws/service/neuron/dlami/multi-framework/ubuntu-22.04/latest/image_id
     Description: The Neuron AMI
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: The EC2 Key Pair to allow SSH access to the instances
 
 # Fn::ForEach では TemplateURL が展開されなかったため、個別に定義
 Resources:
@@ -22,8 +25,9 @@ Resources:
         SGId: !Ref ModelSGId
         SubnetId: !Ref SubnetId
         ImageId: !Ref NeuronAMI
+        KeyName: !Ref KeyName
         InstanceType: inf2.24xlarge
         BlockDeviceName: "/dev/sda1"
         VolumeSize: 512
         VolumeType: gp3
-        TagName: !Sub "model-1"
+        TagName: model-1

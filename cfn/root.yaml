@@ -7,6 +7,9 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
     Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
     Description: The Amazon Linux 2 AMI
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: The EC2 Key Pair to allow SSH access to the instances
 
 Resources:
   VPCStack:
@@ -29,6 +32,7 @@ Resources:
         SGId: !GetAtt SecurityGroupStack.Outputs.ControllerSGId
         SubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
         ImageId: !Ref AmazonLinux2AMI
+        KeyName: !Ref KeyName
         InstanceType: t2.medium
         BlockDeviceName: "/dev/xvda"
         VolumeSize: 64
@@ -43,6 +47,7 @@ Resources:
         SGId: !GetAtt SecurityGroupStack.Outputs.GradioSGId
         SubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
         ImageId: !Ref AmazonLinux2AMI
+        KeyName: !Ref KeyName
         InstanceType: t2.medium
         BlockDeviceName: "/dev/xvda"
         VolumeSize: 64
@@ -56,6 +61,7 @@ Resources:
       Parameters:
         ModelSGId: !GetAtt SecurityGroupStack.Outputs.ModelSGId
         SubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
+        KeyName: !Ref KeyName
 
   LoadBalancerStack:
     Type: AWS::CloudFormation::Stack
