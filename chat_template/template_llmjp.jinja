@@ -1,0 +1,18 @@
+{%- for message in messages -%}
+    {%- if message['role'] == 'system' -%}
+        {{- '### 指示: ' + message['content'] -}}
+    {%- elif message['role'] == 'user' -%}
+        {{- '### 質問: ' + message['content'] -}}
+    {%- elif message['role'] == 'assistant' -%}
+        {{- '### 回答: ' + message['content'] -}}
+    {%- endif -%}
+    {%- if not loop.last -%}
+        {{- '\n' -}}
+    {%- elif loop.last and add_generation_prompt -%}
+        {{- '\n\n' -}}
+    {%- endif -%}
+{%- endfor -%}
+
+{%- if add_generation_prompt and messages[-1]['role'] != 'assistant' -%}
+    {{- '### 回答: ' -}}
+{% endif %}

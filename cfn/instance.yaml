@@ -32,6 +32,8 @@ Parameters:
 
 Resources:
   Instance:
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: !Ref InstanceType
@@ -47,7 +49,7 @@ Resources:
             VolumeSize: !Ref VolumeSize
             VolumeType: !Ref VolumeType
       UserData:
-        Fn::Base64: !Sub |
+        Fn::Base64: |
           #!/bin/bash -xe
           amazon-linux-extras install -y docker
           systemctl start docker
@@ -55,7 +57,17 @@ Resources:
           usermod -a -G docker ec2-user
       Tags:
         - Key: Name
-          Value: !Join ['-', [!Ref TagName, !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
+          Value:
+            !Join [
+              "-",
+              [
+                !Ref TagName,
+                !Select [
+                  4,
+                  !Split ["-", !Select [2, !Split ["/", !Ref AWS::StackId]]],
+                ],
+              ],
+            ]
 
   InstanceProfile:
     Type: AWS::IAM::InstanceProfile
@@ -78,15 +90,13 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
 
-  ElasticIP:
-    Type: AWS::EC2::EIP
-    Properties:
-      InstanceId: !Ref Instance
-
 Outputs:
   InstanceId:
     Description: "Instance ID"
     Value: !Ref Instance
-  InstancePrivateDNS:
-    Description: "Private DNS"
-    Value: !GetAtt Instance.PrivateDnsName
+  InstancePrivateIP:
+    Description: "Instance Private IP"
+    Value: !GetAtt Instance.PrivateIp
+  InstancePublicIP:
+    Description: "Instance Public IP"
+    Value: !GetAtt Instance.PublicIp

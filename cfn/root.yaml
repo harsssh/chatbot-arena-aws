@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Description: Chatbot Arena Infrastructure
 Transform: AWS::LanguageExtensions
 
@@ -24,35 +24,20 @@ Resources:
       Parameters:
         VpcId: !GetAtt VPCStack.Outputs.VpcId
 
-  ControllerStack:
+  FastChatStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: ./instance.yaml
       Parameters:
-        SGId: !GetAtt SecurityGroupStack.Outputs.ControllerSGId
+        SGId: !GetAtt SecurityGroupStack.Outputs.FastChatSGId
         SubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
         ImageId: !Ref AmazonLinux2AMI
         KeyName: !Ref KeyName
-        InstanceType: t2.medium
-        BlockDeviceName: "/dev/xvda"
+        InstanceType: t2.large
+        BlockDeviceName: /dev/xvda
         VolumeSize: 64
         VolumeType: gp2
-        TagName: "controller"
-
-  GradioStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: ./instance.yaml
-      Parameters:
-        SGId: !GetAtt SecurityGroupStack.Outputs.GradioSGId
-        SubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
-        ImageId: !Ref AmazonLinux2AMI
-        KeyName: !Ref KeyName
-        InstanceType: t2.medium
-        BlockDeviceName: "/dev/xvda"
-        VolumeSize: 64
-        VolumeType: gp2
-        TagName: "gradio"
+        TagName: fastchat
 
   ModelInstanceStack:
     Type: AWS::CloudFormation::Stack
@@ -71,4 +56,4 @@ Resources:
         VpcId: !GetAtt VPCStack.Outputs.VpcId
         PublicSubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
         PublicSubnet2Id: !GetAtt VPCStack.Outputs.PublicSubnet2Id
-        GradioALBSGId: !GetAtt SecurityGroupStack.Outputs.GradioALBSGId
+        FastChatALBSGId: !GetAtt SecurityGroupStack.Outputs.FastChatALBSGId

@@ -61,3 +61,18 @@ Resources:
         VolumeSize: 512
         VolumeType: gp3
         TagName: model-3
+
+  # ModelInstance4:
+  #   Type: AWS::CloudFormation::Stack
+  #   Properties:
+  #     TemplateURL: ./instance.yaml
+  #     Parameters:
+  #       SGId: !Ref ModelSGId
+  #       SubnetId: !Ref SubnetId
+  #       ImageId: !Ref NeuronAMI
+  #       KeyName: !Ref KeyName
+  #       InstanceType: inf2.24xlarge
+  #       BlockDeviceName: "/dev/sda1"
+  #       VolumeSize: 512
+  #       VolumeType: gp3
+  #       TagName: model-4

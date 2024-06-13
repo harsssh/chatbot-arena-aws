@@ -10,46 +10,46 @@ Parameters:
   PublicSubnet2Id:
     Type: AWS::EC2::Subnet::Id
     Description: The ID of the Public Subnet 2
-  GradioALBSGId:
+  FastChatALBSGId:
     Type: AWS::EC2::SecurityGroup::Id
-    Description: The ID of the Gradio ALB Security Group
+    Description: The ID of the FastChat ALB Security Group
 
 Resources:
-  GradioALB:
+  FastChatALB:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
-      Name: !Join ['-', ['gradio-alb', !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
+      Name: !Join ['-', ['fastchat-alb', !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
       Subnets:
         - !Ref PublicSubnetId
         - !Ref PublicSubnet2Id
       SecurityGroups:
-        - !Ref GradioALBSGId
+        - !Ref FastChatALBSGId
       Scheme: internet-facing
 
-  GradioTargetGroup:
+  FastChatTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      Name: !Join ['-', ['gradio-tg', !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
+      Name: !Join ['-', ['fastchat-tg', !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
       Port: 8080
       Protocol: HTTP
       TargetType: ip
       VpcId: !Ref VpcId
       HealthCheckPath: /
 
-  GradioListener:
+  FastChatListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       DefaultActions:
         - Type: forward
-          TargetGroupArn: !Ref GradioTargetGroup
-      LoadBalancerArn: !Ref GradioALB
+          TargetGroupArn: !Ref FastChatTargetGroup
+      LoadBalancerArn: !Ref FastChatALB
       Port: 80
       Protocol: HTTP
 
 Outputs:
-  GradioALBId:
-    Description: Application Load Balancer ID for Gradio
-    Value: !Ref GradioALB
-  GradioTargetGroupArn:
-    Description: Target Group ARN for Gradio
-    Value: !Ref GradioTargetGroup
+  FastChatALBId:
+    Description: Application Load Balancer ID for FastChat
+    Value: !Ref FastChatALB
+  FastChatTargetGroupArn:
+    Description: Target Group ARN for FastChat
+    Value: !Ref FastChatTargetGroup
