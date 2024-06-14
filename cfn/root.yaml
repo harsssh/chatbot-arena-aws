@@ -57,3 +57,4 @@ Resources:
         PublicSubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
         PublicSubnet2Id: !GetAtt VPCStack.Outputs.PublicSubnet2Id
         FastChatALBSGId: !GetAtt SecurityGroupStack.Outputs.FastChatALBSGId
+        FastChatInstanceId: !GetAtt FastChatStack.Outputs.InstanceId

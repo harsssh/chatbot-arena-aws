@@ -13,6 +13,9 @@ Parameters:
   FastChatALBSGId:
     Type: AWS::EC2::SecurityGroup::Id
     Description: The ID of the FastChat ALB Security Group
+  FastChatInstanceId:
+    Type: AWS::EC2::Instance::Id
+    Description: The ID of the FastChat Instance
 
 Resources:
   FastChatALB:
@@ -29,12 +32,14 @@ Resources:
   FastChatTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      Name: !Join ['-', ['fastchat-tg', !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
+      Name: !Join ['-', ['fastchat-tg-2', !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
       Port: 8080
       Protocol: HTTP
-      TargetType: ip
       VpcId: !Ref VpcId
       HealthCheckPath: /
+      TargetType: instance
+      Targets:
+        - Id: !Ref FastChatInstanceId
 
   FastChatListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
