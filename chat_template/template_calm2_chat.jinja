@@ -1,5 +1,7 @@
 {%- for message in messages -%}
-    {%- if message['role'] == 'user' -%}
+    {%- if message['role'] == 'system' -%}
+        {{- message['content'] -}}
+    {%- elif message['role'] == 'user' -%}
         {{- 'USER: ' + message['content'] -}}
     {%- elif message['role'] == 'assistant' -%}
         {{- 'ASSISTANT: ' + message['content'] + '<|endoftext|>' -}}
