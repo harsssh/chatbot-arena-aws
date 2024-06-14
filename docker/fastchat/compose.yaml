@@ -1,0 +1,38 @@
+services:
+  controller:
+    container_name: controller
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    command:
+      - -m
+      - fastchat.serve.controller
+      - --host
+      - 0.0.0.0
+      - --port
+      - '3000'
+
+  ui:
+    container_name: ui
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - controller
+    volumes:
+      - ./api_endpoints.json:/app/api_endpoints.json
+    ports:
+      - '8080:8080'
+    command:
+      - -m
+      - fastchat.serve.gradio_web_server_multi
+      - --host
+      - 0.0.0.0
+      - --port
+      - '8080'
+      - --controller-url
+      - http://controller:3000
+      - --register-api-endpoint-file
+      - /app/api_endpoints.json
