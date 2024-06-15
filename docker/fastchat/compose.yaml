@@ -23,8 +23,6 @@ services:
       - controller
     volumes:
       - ./api_endpoints.json:/app/api_endpoints.json
-    ports:
-      - '8080:8080'
     command:
       - -m
       - fastchat.serve.gradio_web_server_multi
@@ -36,3 +34,24 @@ services:
       - http://controller:3000
       - --register-api-endpoint-file
       - /app/api_endpoints.json
+    
+  caddy:
+    container_name: caddy
+    image: caddy:2.8.4-alpine
+    restart: unless-stopped
+    env_file:
+      - ./caddy/.env
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+
+volumes:
+  caddy_data:
+    external: true
+  caddy_config:

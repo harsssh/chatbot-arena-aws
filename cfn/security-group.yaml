@@ -19,9 +19,9 @@ Resources:
           ToPort: 22
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
-          FromPort: 8080
-          ToPort: 8080
-          SourceSecurityGroupId: !Ref FastChatALBSG
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
 
   ModelSG:
     Type: AWS::EC2::SecurityGroup
@@ -43,22 +43,6 @@ Resources:
           ToPort: 22
           CidrIp: 0.0.0.0/0
 
-  FastChatALBSG:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: !Sub "fastchat-alb-sg-${AWS::StackName}"
-      GroupDescription: Allow traffic for FastChat ALB
-      VpcId: !Ref VpcId
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: 443
-          ToPort: 443
-          CidrIp: 0.0.0.0/0
-
   ModelNLBSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -75,9 +59,6 @@ Outputs:
   FastChatSGId:
     Description: Security Group ID for FastChat
     Value: !Ref FastChatSG
-  FastChatALBSGId:
-    Description: Security Group ID for FastChat ALB
-    Value: !Ref FastChatALBSG
   ModelSGId:
     Description: Security Group ID for Model
     Value: !Ref ModelSG

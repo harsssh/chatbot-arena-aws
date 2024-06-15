@@ -1,0 +1,2 @@
+{$SITE_ADDRESS}
+reverse_proxy http://ui:8080

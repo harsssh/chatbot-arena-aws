@@ -38,6 +38,12 @@ Resources:
         VolumeSize: 64
         VolumeType: gp2
         TagName: fastchat
+  
+  FastChatEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId: !GetAtt FastChatStack.Outputs.InstanceId
 
   ModelInstanceStack:
     Type: AWS::CloudFormation::Stack
@@ -51,14 +57,3 @@ Resources:
         ModelNLBSGId: !GetAtt SecurityGroupStack.Outputs.ModelNLBSGId
         NLBSubnet1Id: !GetAtt VPCStack.Outputs.PrivateSubnetId
         NLBSubnet2Id: !GetAtt VPCStack.Outputs.PrivateSubnet2Id
-
-  FastChatALBStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: ./fastchat-alb.yaml
-      Parameters:
-        VpcId: !GetAtt VPCStack.Outputs.VpcId
-        PublicSubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
-        PublicSubnet2Id: !GetAtt VPCStack.Outputs.PublicSubnet2Id
-        FastChatALBSGId: !GetAtt SecurityGroupStack.Outputs.FastChatALBSGId
-        FastChatInstanceId: !GetAtt FastChatStack.Outputs.InstanceId
