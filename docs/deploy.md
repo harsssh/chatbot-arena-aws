@@ -16,4 +16,4 @@ rain deploy cfn/root.yaml $STACK_NAME
     - Resource Policy でアクセスを許可
 - Gradio の前段の ALB を https 化
     - ドメイン取得
-    - ACM で証明書を取得
+    - 証明書を取得
