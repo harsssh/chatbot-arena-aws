@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: The ID of the VPC
+  Subnet1Id:
+    Type: AWS::EC2::Subnet::Id
+    Description: The ID of the Subnet 1
+  Subnet2Id:
+    Type: AWS::EC2::Subnet::Id
+    Description: The ID of the Subnet 2
+  InstanceId:
+    Type: AWS::EC2::Instance::Id
+    Description: The ID of the Instance
+  ModelNLBSG:
+    Type: AWS::EC2::SecurityGroup::Id
+    Description: The ID of the Model NLB Security Group
+
+Resources:
+  NetworkLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Scheme: internal
+      Type: network
+      SecurityGroups:
+        - !Ref ModelNLBSG
+      Subnets:
+        - !Ref Subnet1Id
+        - !Ref Subnet2Id
+
+  Listener1:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup1
+      LoadBalancerArn: !Ref NetworkLoadBalancer
+      Port: 3001
+      Protocol: TCP
+
+  Listener2:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup2
+      LoadBalancerArn: !Ref NetworkLoadBalancer
+      Port: 3002
+      Protocol: TCP
+
+  TargetGroup1:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Port: 3001
+      Protocol: TCP
+      VpcId: !Ref VpcId
+      TargetType: instance
+      Targets:
+        - Id: !Ref InstanceId
+
+  TargetGroup2:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Port: 3002
+      Protocol: TCP
+      VpcId: !Ref VpcId
+      TargetType: instance
+      Targets:
+        - Id: !Ref InstanceId
