@@ -23,6 +23,7 @@ services:
       - controller
     volumes:
       - ./api_endpoints.json:/app/api_endpoints.json
+      - ./gradio_auth:/app/gradio_auth
     command:
       - -m
       - fastchat.serve.gradio_web_server_multi
@@ -34,6 +35,8 @@ services:
       - http://controller:3000
       - --register-api-endpoint-file
       - /app/api_endpoints.json
+      - --gradio-auth-path
+      - /app/gradio_auth
     
   caddy:
     container_name: caddy
