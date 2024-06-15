@@ -6,22 +6,11 @@
 rain deploy cfn/root.yaml $STACK_NAME
 ```
 
-## ECR へのログイン
-各インスタンスは IAM ロールによって ECR へのアクセスを許可しています。
-
-Private なリポジトリにアクセスするには、以下のコマンドを実行してください。
-```bash
-aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $REPOSITORY_URI 
-```
-
-## Controller の起動
-Controller のインスタンスにログインし、以下のコマンドを実行してください。
-```bash
-docker run -d -p 3000:3000 $IMAGE_NAME -m fastchat.serve.controller --host 0.0.0.0 --port 3000
-```
-
-## Gradio Web Server の起動
-Gradio Web Server のインスタンスにログインし、以下のコマンドを実行してください。
-```bash
-docker run -d -p 8080:8080 $IMAGE_NAME -m fastchat.serve.gradio_web_server_multi --host 0.0.0.0 --port 8080 --controller-url http://$CONTROLLER_IP
-```
+## サーバーの起動
+- inf インスタンスで vLLM の API サーバーを起動
+    - vLLM はパッチを当てる
+    - transformers-neuronx もパッチが必要な場合あり
+- fastchat controller, web server を `docker compose` で起動
+    - api_endpoints.json を書く
+- API Gateway を設定
+- Gradio の前段の ALB を https 化
