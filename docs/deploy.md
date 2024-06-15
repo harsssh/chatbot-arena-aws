@@ -13,4 +13,7 @@ rain deploy cfn/root.yaml $STACK_NAME
 - fastchat controller, web server を `docker compose` で起動
     - api_endpoints.json を書く
 - API Gateway を設定
+    - Resource Policy でアクセスを許可
 - Gradio の前段の ALB を https 化
+    - ドメイン取得
+    - ACM で証明書を取得
