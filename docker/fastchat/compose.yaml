@@ -5,6 +5,8 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: always
+    environment:
+      - TZ=Asia/Tokyo
     command:
       - -m
       - fastchat.serve.controller
@@ -26,6 +28,8 @@ services:
       - ./gradio_auth:/app/gradio_auth
       - /var/log/fschat:/log
     working_dir: /log
+    environment:
+      - TZ=Asia/Tokyo
     command:
       - -m
       - fastchat.serve.gradio_web_server_multi
@@ -44,6 +48,8 @@ services:
     container_name: caddy
     image: caddy:2.8.4-alpine
     restart: unless-stopped
+    environment:
+      - TZ=Asia/Tokyo
     env_file:
       - ./caddy/.env
     cap_add:
