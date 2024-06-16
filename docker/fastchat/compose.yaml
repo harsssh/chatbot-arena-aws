@@ -24,6 +24,8 @@ services:
     volumes:
       - ./api_endpoints.json:/app/api_endpoints.json
       - ./gradio_auth:/app/gradio_auth
+      - /var/log/fschat:/log
+    working_dir: /log
     command:
       - -m
       - fastchat.serve.gradio_web_server_multi
