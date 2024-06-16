@@ -35,7 +35,7 @@ Resources:
         KeyName: !Ref KeyName
         InstanceType: t2.large
         BlockDeviceName: /dev/xvda
-        VolumeSize: 64
+        VolumeSize: 128
         VolumeType: gp2
         TagName: fastchat
   
