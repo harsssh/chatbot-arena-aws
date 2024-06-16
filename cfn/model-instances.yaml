@@ -30,25 +30,6 @@ Parameters:
 
 # Fn::ForEach では TemplateURL が展開されなかったため、個別に定義
 Resources:
-  ModelInstance1:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: ./instance.yaml
-      Parameters:
-        SGId: !Ref ModelSGId
-        SubnetId: !Ref SubnetId
-        ImageId: !Ref NeuronAMI
-        KeyName: !Ref KeyName
-        InstanceType: inf2.24xlarge
-        BlockDeviceName: "/dev/sda1"
-        VolumeSize: 512
-        VolumeType: gp3
-        TagName: model-1
-        VpcId: !Ref VpcId
-        NLBSGId: !Ref ModelNLBSGId
-        NLBSubnet1Id: !Ref NLBSubnet1Id
-        NLBSubnet2Id: !Ref NLBSubnet2Id
-
   ModelInstance2:
     Type: AWS::CloudFormation::Stack
     Properties:

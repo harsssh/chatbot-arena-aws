@@ -49,6 +49,16 @@ Resources:
       Port: 3002
       Protocol: TCP
 
+  Listener3:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup3
+      LoadBalancerArn: !Ref NetworkLoadBalancer
+      Port: 3003
+      Protocol: TCP
+
   TargetGroup1:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
@@ -63,6 +73,16 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       Port: 3002
+      Protocol: TCP
+      VpcId: !Ref VpcId
+      TargetType: instance
+      Targets:
+        - Id: !Ref InstanceId
+
+  TargetGroup3:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Port: 3003
       Protocol: TCP
       VpcId: !Ref VpcId
       TargetType: instance
