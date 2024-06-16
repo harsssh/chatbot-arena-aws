@@ -87,28 +87,21 @@ Resources:
         NLBSubnet1Id: !Ref NLBSubnet1Id
         NLBSubnet2Id: !Ref NLBSubnet2Id
 
-  # ModelInstance4:
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: ./instance.yaml
-  #     Parameters:
-  #       SGId: !Ref ModelSGId
-  #       SubnetId: !Ref SubnetId
-  #       ImageId: !Ref NeuronAMI
-  #       KeyName: !Ref KeyName
-  #       InstanceType: inf2.24xlarge
-  #       BlockDeviceName: "/dev/sda1"
-  #       VolumeSize: 512
-  #       VolumeType: gp3
-  #       TagName: model-4
-
-Outputs:
-  ModelInstance1Id:
-    Description: The ID of the Model Instance 1
-    Value: !GetAtt ModelInstance1.Outputs.InstanceId
-  ModelInstance2Id:
-    Description: The ID of the Model Instance 2
-    Value: !GetAtt ModelInstance2.Outputs.InstanceId
-  ModelInstance3Id:
-    Description: The ID of the Model Instance 3
-    Value: !GetAtt ModelInstance3.Outputs.InstanceId
+  ModelInstance4:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./instance.yaml
+      Parameters:
+        SGId: !Ref ModelSGId
+        SubnetId: !Ref SubnetId
+        ImageId: !Ref NeuronAMI
+        KeyName: !Ref KeyName
+        InstanceType: inf2.48xlarge
+        BlockDeviceName: "/dev/sda1"
+        VolumeSize: 512
+        VolumeType: gp3
+        TagName: model-4
+        VpcId: !Ref VpcId
+        NLBSGId: !Ref ModelNLBSGId
+        NLBSubnet1Id: !Ref NLBSubnet1Id
+        NLBSubnet2Id: !Ref NLBSubnet2Id
