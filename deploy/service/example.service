@@ -1,0 +1,11 @@
+[Unit]
+After=network.target
+
+[Service]
+Environment="PATH=/opt/aws_neuronx_venv_transformers_neuronx/bin:$PATH"
+EnvironmentFile=
+ExecStart=/usr/local/bin/run.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

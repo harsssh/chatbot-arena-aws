@@ -1,0 +1,33 @@
+cat transformers-neuronx.patch
+diff --git a/src/transformers_neuronx/module.py b/src/transformers_neuronx/module.py
+index 345529b..becbc35 100644
+--- a/src/transformers_neuronx/module.py
++++ b/src/transformers_neuronx/module.py
+@@ -79,7 +79,7 @@ class LowMemoryModule(torch.nn.Module):
+                         else:
+                             raise FileNotFoundError(f'Could not find a weight for {param._global_key} in {param._file_path}')
+                 else:
+-                    input_param = torch.load(param._file_path)
++                    input_param = torch.load(param._file_path, map_location='cpu')
+                 if torch.nn.parameter.is_lazy(param):
+                     param.materialize(input_param.shape)
+                 param.copy_(input_param)
+@@ -167,7 +167,7 @@ class LowMemoryModule(torch.nn.Module):
+         Eagerly load the pytorch model binary artifact.
+         """
+         state_dict_path = os.path.join(state_dict_dir, _PYTORCH_MODEL_BIN_FILENAME)
+-        state_dict = torch.load(state_dict_path)
++        state_dict = torch.load(state_dict_path, map_location='cpu')
+         self.load_state_dict_low_memory(state_dict)
+
+     def load_pytorch_model_bin_sharded(self, state_dict_dir):
+@@ -180,7 +180,7 @@ class LowMemoryModule(torch.nn.Module):
+         shard_filenames = set(key_to_filename.values())
+         for shard_filename in shard_filenames:
+             path = os.path.join(state_dict_dir, shard_filename)
+-            state_dict = torch.load(path)
++            state_dict = torch.load(path, map_location='cpu')
+             self.load_state_dict_low_memory(state_dict)
+
+     def load_safetensors(self, state_dict_dir):
+
