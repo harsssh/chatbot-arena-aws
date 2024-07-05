@@ -29,23 +29,6 @@ Parameters:
   KeyName:
     Type: AWS::EC2::KeyPair::KeyName
     Description: The EC2 Key Pair to allow SSH access to the instances
-  # for API Gateway
-  VpcId:
-    Type: String
-    Default: AWS::NoValue
-    Description: The ID of the VPC
-  NLBSGId:
-    Type: String 
-    Default: AWS::NoValue
-    Description: The ID of the NLB Security Group
-  NLBSubnet1Id:
-    Type: String 
-    Default: AWS::NoValue
-    Description: The ID of the NLB Subnet 1
-  NLBSubnet2Id:
-    Type: String 
-    Default: AWS::NoValue
-    Description: The ID of the NLB Subnet 2
 
 Conditions:
   IsInf2Instance:
@@ -122,18 +105,6 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
         - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
-
-  NLBStack:
-    Type: AWS::CloudFormation::Stack
-    Condition: IsInf2Instance
-    Properties:
-      TemplateURL: ./api-nlb.yaml
-      Parameters:
-        VpcId: !Ref VpcId
-        ModelNLBSG: !Ref NLBSGId
-        Subnet1Id: !Ref NLBSubnet1Id
-        Subnet2Id: !Ref NLBSubnet2Id
-        InstanceId: !Ref Instance
 
 Outputs:
   InstanceId:

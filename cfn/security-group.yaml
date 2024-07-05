@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 
 Parameters:
   VpcId:
@@ -33,26 +33,10 @@ Resources:
         - IpProtocol: tcp
           FromPort: 3000
           ToPort: 3999
-          SourceSecurityGroupId: !Ref FastChatSG 
-        - IpProtocol: tcp
-          FromPort: 3000
-          ToPort: 3999
-          SourceSecurityGroupId: !Ref ModelNLBSG
+          SourceSecurityGroupId: !Ref FastChatSG
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 0.0.0.0/0
-
-  ModelNLBSG:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: !Sub "model-nlb-sg-${AWS::StackName}"
-      GroupDescription: Allow traffic for Model NLB
-      VpcId: !Ref VpcId
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 3000
-          ToPort: 3999
           CidrIp: 0.0.0.0/0
 
 Outputs:
@@ -62,6 +46,3 @@ Outputs:
   ModelSGId:
     Description: Security Group ID for Model
     Value: !Ref ModelSG
-  ModelNLBSGId:
-    Description: Security Group ID for Model NLB
-    Value: !Ref ModelNLBSG

@@ -14,19 +14,6 @@ Parameters:
   KeyName:
     Type: AWS::EC2::KeyPair::KeyName
     Description: The EC2 Key Pair to allow SSH access to the instances
-  # for API Gateway
-  VpcId:
-    Type: AWS::EC2::VPC::Id
-    Description: The ID of the VPC
-  ModelNLBSGId:
-    Type: AWS::EC2::SecurityGroup::Id
-    Description: The ID of the Model NLB Security Group
-  NLBSubnet1Id:
-    Type: AWS::EC2::Subnet::Id
-    Description: The ID of the Private Subnet 1
-  NLBSubnet2Id:
-    Type: AWS::EC2::Subnet::Id
-    Description: The ID of the Private Subnet 2
 
 # Fn::ForEach では TemplateURL が展開されなかったため、個別に定義
 Resources:
@@ -44,10 +31,6 @@ Resources:
         VolumeSize: 256
         VolumeType: gp3
         TagName: model-1
-        VpcId: !Ref VpcId
-        NLBSGId: !Ref ModelNLBSGId
-        NLBSubnet1Id: !Ref NLBSubnet1Id
-        NLBSubnet2Id: !Ref NLBSubnet2Id
 
   ModelInstance2:
     Type: AWS::CloudFormation::Stack
@@ -63,10 +46,6 @@ Resources:
         VolumeSize: 256
         VolumeType: gp3
         TagName: model-2
-        VpcId: !Ref VpcId
-        NLBSGId: !Ref ModelNLBSGId
-        NLBSubnet1Id: !Ref NLBSubnet1Id
-        NLBSubnet2Id: !Ref NLBSubnet2Id
 
   ModelInstance3:
     Type: AWS::CloudFormation::Stack
@@ -82,7 +61,3 @@ Resources:
         VolumeSize: 256
         VolumeType: gp3
         TagName: model-3
-        VpcId: !Ref VpcId
-        NLBSGId: !Ref ModelNLBSGId
-        NLBSubnet1Id: !Ref NLBSubnet1Id
-        NLBSubnet2Id: !Ref NLBSubnet2Id

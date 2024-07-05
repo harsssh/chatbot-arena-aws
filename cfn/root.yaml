@@ -53,7 +53,3 @@ Resources:
         ModelSGId: !GetAtt SecurityGroupStack.Outputs.ModelSGId
         SubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
         KeyName: !Ref KeyName
-        VpcId: !GetAtt VPCStack.Outputs.VpcId
-        ModelNLBSGId: !GetAtt SecurityGroupStack.Outputs.ModelNLBSGId
-        NLBSubnet1Id: !GetAtt VPCStack.Outputs.PrivateSubnetId
-        NLBSubnet2Id: !GetAtt VPCStack.Outputs.PrivateSubnet2Id
