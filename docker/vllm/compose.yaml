@@ -12,6 +12,8 @@ services:
     volumes:
       - ./chat_template:/app/chat_template
       - ~/.cache/huggingface:/root/.cache/huggingface
+    devices:
+      - /dev/neuron0
     environment:
       TZ: "Asia/Tokyo"
       MODEL: meta-llama/Meta-Llama-3-8B
