@@ -1,6 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
 
-# refs: https://github.com/aws-actions/configure-aws-credentials#configuring-iam-to-trust-github
 Parameters:
   GitHubOrg:
     Description: Name of GitHub organization/user (case sensitive)
@@ -15,6 +14,9 @@ Parameters:
   OIDCAudience:
     Description: Audience supplied to configure-aws-credentials.
     Default: "sts.amazonaws.com"
+    Type: String
+  ECRRepositoryName:
+    Description: ECR Repository name
     Type: String
 
 Conditions:
@@ -52,11 +54,37 @@ Resources:
       ThumbprintList:
         - ffffffffffffffffffffffffffffffffffffffff  # unused
 
+  AttachPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: GetAuthorizationToken
+            Effect: Allow
+            Action:
+              - ecr:GetAuthorizationToken
+            Resource: "*"
+          - Sid: PushImageOnly
+            Effect: Allow
+            Action:
+              - ecr:BatchCheckLayerAvailability
+              - ecr:BatchGetImage
+              - ecr:GetDownloadUrlForLayer
+              - ecr:InitiateLayerUpload
+              - ecr:UploadLayerPart
+              - ecr:CompleteLayerUpload
+              - ecr:PutImage
+            Resource: !Sub arn:aws:ecr:${AWS::Region}:${AWS::AccountId}:repository/${ECRRepositoryName}
+      Roles:
+        - !Ref Role
+
 Outputs:
   Role:
     Value: !GetAtt Role.Arn
-  # TODO: avoid repetition of RoleName
   RoleName:
     Value: !Sub ${GitHubOrg}-${RepositoryName}-GitHubActionsRole
     Export:
       Name: GitHubActionsRoleName
+  ManagedPolicyArn:
+    Value: !Ref AttachPolicy
