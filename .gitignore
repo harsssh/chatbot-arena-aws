@@ -1,2 +1,4 @@
 tmp/
 *.drawio.bkp
+.vscode
+.idea
