@@ -1,5 +1,7 @@
 FROM public.ecr.aws/neuron/pytorch-inference-neuronx:2.1.2-neuronx-py310-sdk2.18.2-ubuntu20.04
 
+WORKDIR /app
+
 COPY changes.patch /tmp/changes.patch
 
 RUN set -ex; \
@@ -9,4 +11,6 @@ RUN set -ex; \
     pip install -U -r requirements-neuron.txt; \
     pip install .
 
-ENTRYPOINT ["python3", "-m", "vllm.entrypoints.openai.api_server"]
+COPY entrypoint.sh /app/entrypoint.sh
+
+ENTRYPOINT ["/app/entrypoint.sh"]
