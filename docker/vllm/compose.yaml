@@ -1,7 +1,6 @@
 services:
   model-1:
     container_name: vllm-openai-api
-    image: vllm-openai-api
     build:
       context: .
       dockerfile: Dockerfile
