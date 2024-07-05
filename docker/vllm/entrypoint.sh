@@ -18,4 +18,4 @@ if [ -n "${CHAT_TEMPLATE}" ]; then
     options="${options} --chat-template ${CHAT_TEMPLATE}"
 fi
 
-python3 -m vllm.entrypoints.openai.api_server "${options}"
+python3 -m vllm.entrypoints.openai.api_server ${options}
