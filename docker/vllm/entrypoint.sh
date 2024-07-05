@@ -14,8 +14,8 @@ options="--model ${MODEL} \
     --host 0.0.0.0 \
     --disable-log-stats"
 
-if [ -n "${TEMPLATE_PATH}" ]; then
-    options="${options} --chat-template ${TEMPLATE_PATH}"
+if [ -n "${CHAT_TEMPLATE}" ]; then
+    options="${options} --chat-template ${CHAT_TEMPLATE}"
 fi
 
 python3 -m vllm.entrypoints.openai.api_server "${options}"
