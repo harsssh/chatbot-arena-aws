@@ -8,8 +8,9 @@ Parameters:
     Type: AWS::EC2::Subnet::Id
     Description: The ID of the Subnet
   ImageId:
-    Type: AWS::EC2::Image::Id
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
     Description: The ID of the AMI
+    Default: /aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id
   InstanceType:
     Type: String
     Description: The type of the instance
@@ -64,13 +65,15 @@ Resources:
           Ebs:
             VolumeSize: !Ref VolumeSize
             VolumeType: !Ref VolumeType
+      # Install Docker Engine on Ubuntu
+      # refs: https://docs.docker.com/engine/install/ubuntu/
       UserData:
         Fn::Base64: |
           #!/bin/bash -xe
-          amazon-linux-extras install -y docker
-          systemctl start docker
-          systemctl enable docker
-          usermod -a -G docker ec2-user
+          for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+          curl -fsSL https://get.docker.com -o get-docker.sh
+          sudo sh get-docker.sh
+          sudo usermod -aG docker ubuntu
       Tags:
         - Key: Name
           Value:
