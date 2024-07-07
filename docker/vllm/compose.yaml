@@ -1,3 +1,11 @@
+x-devices: &devices
+  - /dev/neuron0
+  - /dev/neuron1
+  - /dev/neuron2
+  - /dev/neuron3
+  - /dev/neuron4
+  - /dev/neuron5
+
 services:
   model-1:
     container_name: vllm-openai-api
@@ -11,8 +19,7 @@ services:
     volumes:
       - ./chat_template:/app/chat_template
       - ~/.cache/huggingface:/root/.cache/huggingface
-    devices:
-      - /dev/neuron0
+    devices: *devices
     environment:
       TZ: "Asia/Tokyo"
       MODEL: meta-llama/Meta-Llama-3-8B
