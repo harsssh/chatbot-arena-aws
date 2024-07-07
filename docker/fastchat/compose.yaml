@@ -14,7 +14,7 @@ services:
       - TZ=Asia/Tokyo
     networks:
       - fastchat_litellm
-      - caddy_fastchat
+      - default 
     command:
       - -m
       - fastchat.serve.gradio_web_server_multi
@@ -43,7 +43,7 @@ services:
       - '443:443'
       - '443:443/udp'
     networks:
-      - caddy_fastchat
+      - default
     volumes:
       - caddy_data:/data
       - caddy_config:/config
@@ -55,6 +55,5 @@ volumes:
   caddy_config:
 
 networks:
-  caddy_fastchat:
   fastchat_litellm:
     external: true
