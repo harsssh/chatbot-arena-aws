@@ -22,11 +22,6 @@ Resources:
           FromPort: 443
           ToPort: 443
           CidrIp: 0.0.0.0/0
-        # For LiteLLM admin UI
-        - IpProtocol: tcp
-          FromPort: 4000
-          ToPort: 4000
-          CidrIp: 0.0.0.0/0
 
   ModelSG:
     Type: AWS::EC2::SecurityGroup
