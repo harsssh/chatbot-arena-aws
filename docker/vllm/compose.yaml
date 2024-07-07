@@ -19,6 +19,7 @@ services:
     volumes:
       - ./chat_template:/app/chat_template
       - ~/.cache/huggingface:/root/.cache/huggingface
+      - neuron_compile_cache:/var/tmp/neuron-compile-cache
     env_file:
       - .env
     devices: *devices
@@ -27,3 +28,6 @@ services:
       MODEL: meta-llama/Meta-Llama-3-8B
       PORT: 3000
       CORES: 0-1
+
+volumes:
+  neuron_compile_cache:
