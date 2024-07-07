@@ -12,6 +12,9 @@ services:
     working_dir: /log
     environment:
       - TZ=Asia/Tokyo
+    networks:
+      - fastchat_litellm
+      - caddy_fastchat
     command:
       - -m
       - fastchat.serve.gradio_web_server_multi
@@ -39,6 +42,8 @@ services:
     ports:
       - '443:443'
       - '443:443/udp'
+    networks:
+      - caddy_fastchat
     volumes:
       - caddy_data:/data
       - caddy_config:/config
@@ -48,3 +53,7 @@ volumes:
   caddy_data:
     external: true
   caddy_config:
+
+networks:
+  fastchat_litellm:
+    external: true

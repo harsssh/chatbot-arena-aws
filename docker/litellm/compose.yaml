@@ -4,6 +4,9 @@ services:
     image: ghcr.io/berriai/litellm:main-v1.41.7
     ports:
       - "4000:4000"
+    networks:
+      - fastchat_litellm
+      - litellm_backend
     volumes:
       - ./config.yaml:/app/config.yaml
     environment:
@@ -25,6 +28,8 @@ services:
     environment:
       TZ: "Asia/Tokyo"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?}"
+    networks:
+      - litellm_backend
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -35,3 +40,7 @@ services:
 
 volumes:
   postgres_data:
+
+networks:
+  fastchat_litellm:
+    external: true
