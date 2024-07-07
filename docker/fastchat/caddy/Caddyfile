@@ -1,6 +1,6 @@
 {$SITE_ADDRESS}
 handle_path /api/* {
-  reverse_proxy {$API_BASE} {
+  reverse_proxy http://litellm:4000 {
     header_up Host {upstream_hostport}
   }
 }
