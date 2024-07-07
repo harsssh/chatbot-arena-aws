@@ -5,7 +5,7 @@ services:
     ports:
       - "127.0.0.1:4000:4000"
     networks:
-      - fastchat_litellm
+      - litellm_shared
       - default
     volumes:
       - ./config.yaml:/app/config.yaml
@@ -43,5 +43,5 @@ volumes:
   postgres_data:
 
 networks:
-  fastchat_litellm:
+  litellm_shared:
     external: true

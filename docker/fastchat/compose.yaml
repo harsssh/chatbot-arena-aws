@@ -13,7 +13,7 @@ services:
     environment:
       - TZ=Asia/Tokyo
     networks:
-      - fastchat_litellm
+      - litellm_shared
       - default 
     command:
       - -m
@@ -44,6 +44,7 @@ services:
       - '443:443/udp'
     networks:
       - default
+      - litellm_shared
     volumes:
       - caddy_data:/data
       - caddy_config:/config
@@ -55,5 +56,5 @@ volumes:
   caddy_config:
 
 networks:
-  fastchat_litellm:
+  litellm_shared:
     external: true
