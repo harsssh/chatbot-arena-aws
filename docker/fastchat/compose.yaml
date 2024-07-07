@@ -55,5 +55,6 @@ volumes:
   caddy_config:
 
 networks:
+  caddy_fastchat:
   fastchat_litellm:
     external: true

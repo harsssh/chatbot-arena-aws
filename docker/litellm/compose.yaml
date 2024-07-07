@@ -42,5 +42,6 @@ volumes:
   postgres_data:
 
 networks:
+  litellm_backend:
   fastchat_litellm:
     external: true
