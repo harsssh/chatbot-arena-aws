@@ -33,12 +33,12 @@ Resources:
         SubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
         ImageId: !Ref AmazonLinux2AMI
         KeyName: !Ref KeyName
-        InstanceType: t2.large
+        InstanceType: t3.medium
         BlockDeviceName: /dev/xvda
         VolumeSize: 128
         VolumeType: gp2
         TagName: fastchat
-  
+
   FastChatEIP:
     Type: AWS::EC2::EIP
     Properties:
