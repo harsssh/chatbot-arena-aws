@@ -3,7 +3,7 @@ services:
     container_name: litellm
     image: ghcr.io/berriai/litellm:main-v1.41.7
     ports:
-      - "4000:4000"
+      - "127.0.0.1:4000:4000"
     networks:
       - fastchat_litellm
       - litellm_backend
