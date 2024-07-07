@@ -33,7 +33,7 @@ Resources:
         SubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
         ImageId: !Ref AmazonLinux2AMI
         KeyName: !Ref KeyName
-        InstanceType: t3.medium
+        InstanceType: t3.large
         BlockDeviceName: /dev/xvda
         VolumeSize: 128
         VolumeType: gp2
