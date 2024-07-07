@@ -19,6 +19,8 @@ services:
     volumes:
       - ./chat_template:/app/chat_template
       - ~/.cache/huggingface:/root/.cache/huggingface
+    env_file:
+      - .env
     devices: *devices
     environment:
       TZ: "Asia/Tokyo"
