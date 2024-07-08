@@ -60,7 +60,7 @@ index c01e7311..d1aa4a50 100644
          parser.add_argument('--seed',
                              type=int,
 diff --git a/vllm/model_executor/models/__init__.py b/vllm/model_executor/models/__init__.py
-index 75c2ae1e..37fc2f2d 100644
+index 75c2ae1e..932bd3c9 100644
 --- a/vllm/model_executor/models/__init__.py
 +++ b/vllm/model_executor/models/__init__.py
 @@ -30,7 +30,7 @@ _MODELS = {
@@ -72,7 +72,7 @@ index 75c2ae1e..37fc2f2d 100644
      "MixtralForCausalLM": ("mixtral", "MixtralForCausalLM"),
      "QuantMixtralForCausalLM": ("mixtral_quant", "MixtralForCausalLM"),
      # transformers's mpt class has lower case
-@@ -63,7 +63,10 @@ _ROCM_PARTIALLY_SUPPORTED_MODELS = {
+@@ -63,7 +63,11 @@ _ROCM_PARTIALLY_SUPPORTED_MODELS = {
  }
  
  # Models not supported by Neuron.
@@ -80,6 +80,7 @@ index 75c2ae1e..37fc2f2d 100644
 +_NEURON_SUPPORTED_MODELS = {
 +    "LlamaForCausalLM": "neuron.llama",
 +    "MistralForCausalLM": "neuron.mistral",
++    "MixtralForCausalLM": "neuron.mixtral",
 +}
  
  
@@ -182,4 +183,76 @@ index 00000000..aa4cb541
 +        from transformers_neuronx.mistral.model import MistralForSampling
 +
 +        self.model = MistralForSampling.from_pretrained(model_name_or_path, **kwargs)
++        self.model.to_neuron()
+diff --git a/vllm/model_executor/models/neuron/mixtral.py b/vllm/model_executor/models/neuron/mixtral.py
+new file mode 100644
+index 00000000..a16c4bc6
+--- /dev/null
++++ b/vllm/model_executor/models/neuron/mixtral.py
+@@ -0,0 +1,66 @@
++"""Inference-only LLaMA model compatible with HuggingFace weights."""
++import os
++from typing import List, Optional, Tuple
++
++import torch
++from torch import nn
++from transformers import MixtralConfig
++
++from vllm.model_executor.input_metadata import InputMetadata
++from vllm.model_executor.layers.sampler import Sampler
++from vllm.model_executor.sampling_metadata import SamplingMetadata
++from vllm.sequence import SamplerOutput
++
++KVCache = Tuple[torch.Tensor, torch.Tensor]
++
++
++class MixtralForCausalLM(nn.Module):
++
++    def __init__(
++        self,
++        config: MixtralConfig,
++        linear_method=None,
++    ) -> None:
++        super().__init__()
++        self.config = config
++        self.linear_method = linear_method
++        self.model = None
++        self.sampler = Sampler(config.vocab_size)
++
++    def forward(
++        self,
++        input_ids: torch.Tensor,
++        positions: torch.Tensor,
++        kv_caches: List[KVCache],
++        input_metadata: InputMetadata,
++    ) -> torch.Tensor:
++        with torch.inference_mode():
++            block_size = self.model.context_buckets[-1]
++            if input_metadata.is_prompt:
++                seq_ids = input_metadata.slot_mapping[:, 0] // block_size
++            else:
++                seq_ids = input_metadata.block_tables
++            logits = self.model(input_ids,
++                                cache_ids=positions,
++                                start_ids=seq_ids.flatten())
++        return logits
++
++    def sample(
++        self,
++        hidden_states: torch.Tensor,
++        sampling_metadata: SamplingMetadata,
++    ) -> Optional[SamplerOutput]:
++        next_tokens = self.sampler(self.model.chkpt_model.lm_head,
++                                   hidden_states, sampling_metadata)
++        return next_tokens
++
++    def load_weights(self,
++                     model_name_or_path: str,
++                     cache_dir: Optional[str] = None,
++                     load_format: str = "auto",
++                     revision: Optional[str] = None,
++                     **kwargs):
++        from transformers_neuronx.mixtral.model import MixtralForSampling
++
++        self.model = MixtralForSampling.from_pretrained(model_name_or_path, **kwargs)
 +        self.model.to_neuron()
