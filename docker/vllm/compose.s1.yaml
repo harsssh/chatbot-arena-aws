@@ -1,0 +1,95 @@
+x-common: &common
+  build:
+    context: .
+    dockerfile: Dockerfile
+  restart: always
+  ipc: host
+  volumes:
+    - ./chat_template:/app/chat_template
+    - ~/.cache/huggingface:/root/.cache/huggingface
+    - neuron_compile_cache:/var/tmp/neuron-compile-cache
+  env_file:
+    - .env
+  devices:
+    - /dev/neuron0
+    - /dev/neuron1
+    - /dev/neuron2
+    - /dev/neuron3
+    - /dev/neuron4
+    - /dev/neuron5
+    - /dev/neuron6
+    - /dev/neuron7
+    - /dev/neuron8
+    - /dev/neuron9
+    - /dev/neuron10
+    - /dev/neuron11
+
+services:
+  elyza:
+    <<: *common
+    container_name: elyza
+    ports:
+      - "3000:3000"
+    environment:
+      TZ: Asia/Tokyo
+      MODEL: elyza/Llama-3-ELYZA-JP-8B
+      PORT: 3000
+      CORES: 0-1
+
+  swallow-ms:
+    <<: *common
+    container_name: swallow-ms
+    ports:
+      - "3001:3001"
+    environment:
+      TZ: Asia/Tokyo
+      MODEL: tokyotech-llm/Swallow-MS-7b-instruct-v0.1
+      PORT: 3001
+      CORES: 2-3
+
+  llama:
+    container_name: llama
+    ports:
+      - "3002:3002"
+    environment:
+      TZ: Asia/Tokyo
+      MODEL: tokyotech-llm/Swallow-MS-7b-instruct-v0.1
+      PORT: 3002
+      CORES: 4-5
+
+  llmjp:
+    <<: *common
+    container_name: llmjp
+    ports:
+      - "3003:3003"
+    devices: *devices
+    environment:
+      TZ: Asia/Tokyo
+      MODEL: llm-jp/llm-jp-13b-instruct-full-ac_001_16x-dolly-ichikara_004_001_single-oasst-oasst2-v2.0 
+      PORT: 3003
+      CORES: 6-9
+  
+  swallow-mx:
+    <<: *common
+    container_name: swallow-mx
+    ports:
+      - "3004:3004"
+    environment:
+      TZ: Asia/Tokyo
+      MODEL: tokyotech-llm/Swallow-MX-8x7b-NVE-v0.1
+      PORT: 3004
+      CORES: 10-17
+      TENSOR_PARALLEL_SIZE: 8
+
+  calm:
+    container_name: calm
+    ports:
+      - "3005:3005"
+    environment:
+      TZ: Asia/Tokyo
+      MODEL: cyberagent/calm3-22b-chat
+      PORT: 3005
+      CORES: 18-23
+
+volumes:
+  neuron_compile_cache:

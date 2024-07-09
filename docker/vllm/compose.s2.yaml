@@ -1,0 +1,51 @@
+x-common: &common
+  build:
+    context: .
+    dockerfile: Dockerfile
+  restart: always
+  ipc: host
+  volumes:
+    - ./chat_template:/app/chat_template
+    - ~/.cache/huggingface:/root/.cache/huggingface
+    - neuron_compile_cache:/var/tmp/neuron-compile-cache
+  env_file:
+    - .env
+  devices:
+    - /dev/neuron0
+    - /dev/neuron1
+    - /dev/neuron2
+    - /dev/neuron3
+    - /dev/neuron4
+    - /dev/neuron5
+    - /dev/neuron6
+    - /dev/neuron7
+    - /dev/neuron8
+    - /dev/neuron9
+    - /dev/neuron10
+    - /dev/neuron11
+
+services:
+  swallow-70b:
+    <<: *common
+    container_name: swallow-70b
+    ports:
+      - "3000:3000"
+    environment:
+      TZ: Asia/Tokyo
+      MODEL: tokyotech-llm/Llama-3-Swallow-70B-Instruct-v0.1
+      PORT: 3000
+      CORES: 0-21
+
+  swallow-8b:
+    <<: *common
+    container_name: swallow-8b
+    ports:
+      - "3001:3001"
+    environment:
+      TZ: Asia/Tokyo
+      MODEL: tokyotech-llm/Llama-3-Swallow-8B-Instruct-v0.1 
+      PORT: 3001
+      CORES: 2-3
+
+volumes:
+  neuron_compile_cache:
