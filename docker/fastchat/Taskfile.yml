@@ -3,17 +3,6 @@
 
 version: '3'
 
-vars:
-  MODELS:
-    meta-llama/Meta-Llama-3-8B-Instruct
-    cyberagent/calm3-22b-chat
-    elyza/Llama-3-ELYZA-JP-8B
-    llm-jp/llm-jp-13b-instruct-full-ac_001_16x-dolly-ichikara_004_001_single-oasst-oasst2-v2.0
-    tokyotech-llm/Llama-3-Swallow-8B-Instruct-v0.1
-    tokyotech-llm/Swallow-MS-7b-instruct-v0.1
-    tokyotech-llm/Swallow-MX-8x7b-NVE-v0.1
-    tokyotech-llm/Llama-3-Swallow-70B-Instruct-v0.1
-
 tasks:
   replace-api-key:
     desc: Replace API key in api_endpoints.json
