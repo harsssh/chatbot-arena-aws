@@ -3,10 +3,6 @@ Description: Chatbot Arena Infrastructure
 Transform: AWS::LanguageExtensions
 
 Parameters:
-  AmazonLinux2AMI:
-    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
-    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
-    Description: The Amazon Linux 2 AMI
   KeyName:
     Type: AWS::EC2::KeyPair::KeyName
     Description: The EC2 Key Pair to allow SSH access to the instances
@@ -31,7 +27,6 @@ Resources:
       Parameters:
         SGId: !GetAtt SecurityGroupStack.Outputs.FastChatSGId
         SubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
-        ImageId: !Ref AmazonLinux2AMI
         KeyName: !Ref KeyName
         InstanceType: t3.large
         BlockDeviceName: /dev/xvda
