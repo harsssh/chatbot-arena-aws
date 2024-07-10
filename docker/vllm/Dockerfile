@@ -1,9 +1,8 @@
-FROM public.ecr.aws/neuron/pytorch-inference-neuronx:2.1.2-neuronx-py310-sdk2.19.0-ubuntu20.04
+FROM public.ecr.aws/neuron/pytorch-inference-neuronx:2.1.2-neuronx-py310-sdk2.19.0-ubuntu20.04 AS base
 
 WORKDIR /app
 
-# Patch transformers-neuronx
-RUN pip uninstall -y transformers-neuronx
+FROM base AS transformers-neuronx-builder
 COPY changes.transformers-neuronx.patch /tmp/changes.transformers-neuronx.patch
 RUN set -ex; \
     git clone https://github.com/aws-neuron/transformers-neuronx.git; \
@@ -12,7 +11,7 @@ RUN set -ex; \
     git apply /tmp/changes.transformers-neuronx.patch; \
     pip install .
 
-# Install patched vLLM
+FROM base AS vllm-builder
 COPY changes.vllm.patch /tmp/changes.vllm.patch
 ENV VLLM_TARGET_DEVICE=neuron
 RUN set -ex; \
@@ -22,6 +21,8 @@ RUN set -ex; \
     pip install -U -r requirements-neuron.txt; \
     pip install .
 
+FROM base
+COPY --from=transformers-neuronx-builder /usr/local/lib/python3.10/site-packages/transformers_neuronx /usr/local/lib/python3.10/site-packages/transformers_neuronx
+COPY --from=vllm-builder /usr/local/lib/python3.10/site-packages/vllm /usr/local/lib/python3.10/site-packages/vllm
 COPY entrypoint.sh /app/entrypoint.sh
-
 ENTRYPOINT ["/app/entrypoint.sh"]
