@@ -69,6 +69,7 @@ services:
       PORT: 3003
       CORES: 8-15
       TENSOR_PARALLEL_SIZE: 8
+      CHAT_TEMPLATE: chat_template/mixtral.jinja
 
   calm:
     container_name: calm
