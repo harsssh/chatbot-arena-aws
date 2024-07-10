@@ -6,6 +6,10 @@ Parameters:
   KeyName:
     Type: AWS::EC2::KeyPair::KeyName
     Description: The EC2 Key Pair to allow SSH access to the instances
+  FastChatBaseImageId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id
+    Description: The base AMI ID for FastChat instances
 
 Resources:
   VPCStack:
@@ -29,6 +33,7 @@ Resources:
         SubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
         KeyName: !Ref KeyName
         InstanceType: t3.large
+        ImageId: !Ref FastChatBaseImageId
         BlockDeviceName: /dev/sda1
         VolumeSize: 128
         VolumeType: gp3
