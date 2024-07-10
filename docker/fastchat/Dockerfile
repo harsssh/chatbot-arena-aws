@@ -11,3 +11,5 @@ RUN set -ex; \
     pip install ".[model_worker,webui]"; \
     cd .. ; \
     rm -rf FastChat
+
+ENTRYPOINT [ "python3" ]
