@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  MODELS:
+    meta-llama/Meta-Llama-3-8B-Instruct
+    cyberagent/calm3-22b-chat
+    elyza/Llama-3-ELYZA-JP-8B
+    llm-jp/llm-jp-13b-instruct-full-ac_001_16x-dolly-ichikara_004_001_single-oasst-oasst2-v2.0
+    tokyotech-llm/Llama-3-Swallow-8B-Instruct-v0.1
+    tokyotech-llm/Swallow-MS-7b-instruct-v0.1
+    tokyotech-llm/Swallow-MX-8x7b-NVE-v0.1
+    tokyotech-llm/Llama-3-Swallow-70B-Instruct-v0.1
+
+tasks:
+  generate-api-endpoints:
+    desc: Generate api_endpoints.json
+    vars:
+      MODELS_ARG:
+        sh: tr ' ' , <<< "{{.MODELS}}"
+    cmds:
+      - python3 scripts/generate_api_endpoints.py -o api_endpoints.json {{.CLI_ARGS}} {{.MODELS_ARG}} 
+    status:
+      - test -f api_endpoints.json
+
+  configure-docker:
+    desc: Create external volumes and networks
+    cmds:
+      - docker volume create caddy_data
+      - docker network create litellm_shared
+    status:
+      - docker volume inspect caddy_data
+      - docker network inspect litellm_shared
+
+  clean:
+    desc: Clean up
+    cmds:
+      - rm -f api_endpoints.json
+      - docker volume rm caddy_data
+      - docker network rm litellm_shared
+    status:
+      - test ! -f api_endpoints.json
+      - docker volume inspect caddy_data || true
+      - docker network inspect litellm_shared || true
