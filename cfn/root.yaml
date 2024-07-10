@@ -29,9 +29,9 @@ Resources:
         SubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
         KeyName: !Ref KeyName
         InstanceType: t3.large
-        BlockDeviceName: /dev/xvda
+        BlockDeviceName: /dev/sda1
         VolumeSize: 128
-        VolumeType: gp2
+        VolumeType: gp3
         TagName: fastchat
 
   FastChatEIP:
