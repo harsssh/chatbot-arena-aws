@@ -15,15 +15,23 @@ vars:
     tokyotech-llm/Llama-3-Swallow-70B-Instruct-v0.1
 
 tasks:
-  generate-api-endpoints:
-    desc: Generate api_endpoints.json
-    vars:
-      MODELS_ARG:
-        sh: tr ' ' , <<< "{{.MODELS}}"
-    cmds:
-      - python3 scripts/generate_api_endpoints.py -o api_endpoints.json {{.CLI_ARGS}} {{.MODELS_ARG}} 
-    status:
+  replace-api-key:
+    desc: Replace API key in api_endpoints.json
+    preconditions:
       - test -f api_endpoints.json
+      - test -n "{{.CLI_ARGS}}"
+    cmds:
+      - |
+        jq --arg new_key "{{.CLI_ARGS}}" '
+          walk(
+            if type == "object" and has("api_key") then 
+              .api_key = $new_key 
+            else 
+              . 
+            end
+          )
+        ' api_endpoints.json > api_endpoints.json.tmp
+      - mv api_endpoints.json.tmp api_endpoints.json
 
   configure-docker:
     desc: Create external volumes and networks
@@ -36,6 +44,7 @@ tasks:
 
   clean:
     desc: Clean up
+    prompt: Are you sure you want to clean up?
     cmds:
       - rm -f api_endpoints.json
       - docker volume rm caddy_data
