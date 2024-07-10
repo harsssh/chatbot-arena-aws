@@ -1,6 +1,5 @@
 # syntax=docker/dockerfile:1
 FROM public.ecr.aws/neuron/pytorch-inference-neuronx:2.1.2-neuronx-py310-sdk2.19.0-ubuntu20.04 AS base
-
 WORKDIR /app
 
 FROM base AS transformers-neuronx-builder
