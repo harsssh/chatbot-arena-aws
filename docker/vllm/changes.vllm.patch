@@ -1,0 +1,37 @@
+diff --git a/requirements-common.txt b/requirements-common.txt
+index bf9987e3..9e9ed560 100644
+--- a/requirements-common.txt
++++ b/requirements-common.txt
+@@ -20,3 +20,4 @@ lm-format-enforcer == 0.10.1
+ outlines >= 0.0.43 # Requires torch >= 2.1.0
+ typing_extensions
+ filelock >= 3.10.4 # filelock starts to support `mode` argument from 3.10.4
++ray
+diff --git a/vllm/engine/arg_utils.py b/vllm/engine/arg_utils.py
+index cd29db7d..6ce3c118 100644
+--- a/vllm/engine/arg_utils.py
++++ b/vllm/engine/arg_utils.py
+@@ -321,7 +321,7 @@ class EngineArgs:
+         parser.add_argument('--block-size',
+                             type=int,
+                             default=EngineArgs.block_size,
+-                            choices=[8, 16, 32],
++                            #choices=[8, 16, 32],
+                             help='Token block size for contiguous chunks of '
+                             'tokens.')
+ 
+diff --git a/vllm/model_executor/model_loader/neuron.py b/vllm/model_executor/model_loader/neuron.py
+index 07e23aca..8fe990a7 100644
+--- a/vllm/model_executor/model_loader/neuron.py
++++ b/vllm/model_executor/model_loader/neuron.py
+@@ -31,7 +31,9 @@ _NEURON_SUPPORTED_MODELS: Dict[str, Tuple[str, str, str]] = {
+     "LlamaForCausalLM": ("transformers_neuronx.llama.model",
+                          "LlamaForSampling", "LlamaForCausalLM"),
+     "MistralForCausalLM": ("transformers_neuronx.mistral.model",
+-                           "MistralForSampling", "MistralForCausalLM")
++                           "MistralForSampling", "MistralForCausalLM"),
++    "MixtralForCausalLM": ("transformers_neuronx.mixtral.model",
++                           "MixtralForSampling", "MixtralForCausalLM")
+ }
+ 
+ 

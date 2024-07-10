@@ -13,11 +13,12 @@ RUN set -ex; \
     pip install .
 
 # Install patched vLLM
-COPY changes.patch /tmp/changes.patch
+COPY changes.vllm.patch /tmp/changes.vllm.patch
+ENV VLLM_TARGET_DEVICE=neuron
 RUN set -ex; \
-    git clone -b v0.3.3 https://github.com/vllm-project/vllm.git; \
+    git clone -b v0.5.0 https://github.com/vllm-project/vllm.git; \
     cd vllm; \
-    git apply /tmp/changes.patch; \
+    git apply /tmp/changes.vllm.patch; \
     pip install -U -r requirements-neuron.txt; \
     pip install .
 
