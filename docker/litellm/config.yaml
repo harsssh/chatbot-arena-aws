@@ -1,7 +1,22 @@
 model_list:
+  - model_name: llama-3-elyza-jp-8b
+    litellm_params:
+      model: elyza/Llama-3-ELYZA-JP-8B
+      api_base: http://0.0.0.0:4000
+
   - model_name: meta-llama-3-8b-instruct
     litellm_params:
       model: meta-llama/Meta-Llama-3-8B-Instruct
+      api_base: http://0.0.0.0:4000
+
+  - model_name: llm-jp-13b-instruct-full-ac_001_16x-dolly-ichikara_004_001_single-oasst-oasst2-v2.0
+    litellm_params:
+      model: llm-jp/llm-jp-13b-instruct-full-ac_001_16x-dolly-ichikara_004_001_single-oasst-oasst2-v2.0
+      api_base: http://0.0.0.0:4000
+
+  - model_name: swallow-mx-8x7b-nve-v0.1
+    litellm_params:
+      model: tokyotech-llm/Swallow-MX-8x7b-NVE-v0.1
       api_base: http://0.0.0.0:4000
 
   - model_name: calm3-22b-chat
@@ -9,14 +24,9 @@ model_list:
       model: cyberagent/calm3-22b-chat
       api_base: http://0.0.0.0:4000
 
-  - model_name: llama-3-elyza-jp-8b
+  - model_name: llama-3-swallow-70b-instruct-v0.1
     litellm_params:
-      model: elyza/Llama-3-ELYZA-JP-8B
-      api_base: http://0.0.0.0:4000
-
-  - model_name: llm-jp-13b-instruct-full-ac_001_16x-dolly-ichikara_004_001_single-oasst-oasst2-v2.0
-    litellm_params:
-      model: llm-jp/llm-jp-13b-instruct-full-ac_001_16x-dolly-ichikara_004_001_single-oasst-oasst2-v2.0
+      model: tokyotech-llm/Llama-3-Swallow-70B-Instruct-v0.1
       api_base: http://0.0.0.0:4000
 
   - model_name: llama-3-swallow-8b-instruct-v0.1
@@ -27,14 +37,4 @@ model_list:
   - model_name: swallow-ms-7b-instruct-v0.1
     litellm_params:
       model: tokyotech-llm/Swallow-MS-7b-instruct-v0.1
-      api_base: http://0.0.0.0:4000
-
-  - model_name: swallow-mx-8x7b-nve-v0.1
-    litellm_params:
-      model: tokyotech-llm/Swallow-MX-8x7b-NVE-v0.1
-      api_base: http://0.0.0.0:4000
-
-  - model_name: llama-3-swallow-70b-instruct-v0.1
-    litellm_params:
-      model: tokyotech-llm/Llama-3-Swallow-70B-Instruct-v0.1
       api_base: http://0.0.0.0:4000
