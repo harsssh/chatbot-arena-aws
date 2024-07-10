@@ -9,7 +9,7 @@ Parameters:
     Description: The ID of the Subnet
   NeuronAMI:
     Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
-    Default: /aws/service/neuron/dlami/multi-framework/ubuntu-22.04/latest/image_id
+    Default: /aws/service/neuron/dlami/pytorch-2.1/ubuntu-22.04/latest/image_id
     Description: The Neuron AMI
   KeyName:
     Type: AWS::EC2::KeyPair::KeyName
