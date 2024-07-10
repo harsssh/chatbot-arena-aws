@@ -51,7 +51,6 @@ services:
     container_name: llmjp
     ports:
       - "3002:3002"
-    devices: *devices
     environment:
       TZ: Asia/Tokyo
       MODEL: llm-jp/llm-jp-13b-instruct-full-ac_001_16x-dolly-ichikara_004_001_single-oasst-oasst2-v2.0 

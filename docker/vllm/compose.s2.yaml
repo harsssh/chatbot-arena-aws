@@ -35,6 +35,7 @@ services:
       MODEL: tokyotech-llm/Llama-3-Swallow-70B-Instruct-v0.1
       PORT: 3000
       CORES: 0-19
+      TENSOR_PARALLEL_SIZE: 16
 
   swallow-8b:
     <<: *common
