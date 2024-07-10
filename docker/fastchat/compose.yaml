@@ -11,7 +11,7 @@ services:
       - /var/log/fschat:/log
     working_dir: /log
     environment:
-      - TZ=Asia/Tokyo
+      TZ: Asia/Tokyo
     networks:
       - litellm_shared
       - default 
@@ -34,7 +34,7 @@ services:
     image: caddy:2.8.4-alpine
     restart: unless-stopped
     environment:
-      - TZ=Asia/Tokyo
+      TZ: Asia/Tokyo
     env_file:
       - ./caddy/.env
     cap_add:
