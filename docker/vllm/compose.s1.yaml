@@ -37,6 +37,7 @@ services:
       CORES: 0-1
 
   llama:
+    <<: *common
     container_name: llama
     ports:
       - "3001:3001"
