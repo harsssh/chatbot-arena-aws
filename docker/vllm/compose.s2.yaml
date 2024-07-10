@@ -34,7 +34,7 @@ services:
       TZ: Asia/Tokyo
       MODEL: tokyotech-llm/Llama-3-Swallow-70B-Instruct-v0.1
       PORT: 3000
-      CORES: 0-21
+      CORES: 0-19
 
   swallow-8b:
     <<: *common
@@ -45,7 +45,18 @@ services:
       TZ: Asia/Tokyo
       MODEL: tokyotech-llm/Llama-3-Swallow-8B-Instruct-v0.1 
       PORT: 3001
-      CORES: 2-3
+      CORES: 20-21
+
+  swallow-ms:
+    <<: *common
+    container_name: swallow-ms
+    ports:
+      - "3002:3002"
+    environment:
+      TZ: Asia/Tokyo
+      MODEL: tokyotech-llm/Swallow-MS-7b-instruct-v0.1
+      PORT: 3002
+      CORES: 22-23
 
 volumes:
   neuron_compile_cache:

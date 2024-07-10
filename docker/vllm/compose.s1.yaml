@@ -36,9 +36,8 @@ services:
       PORT: 3000
       CORES: 0-1
 
-  swallow-ms:
-    <<: *common
-    container_name: swallow-ms
+  llama:
+    container_name: llama
     ports:
       - "3001:3001"
     environment:
@@ -47,49 +46,39 @@ services:
       PORT: 3001
       CORES: 2-3
 
-  llama:
-    container_name: llama
-    ports:
-      - "3002:3002"
-    environment:
-      TZ: Asia/Tokyo
-      MODEL: tokyotech-llm/Swallow-MS-7b-instruct-v0.1
-      PORT: 3002
-      CORES: 4-5
-
   llmjp:
     <<: *common
     container_name: llmjp
     ports:
-      - "3003:3003"
+      - "3002:3002"
     devices: *devices
     environment:
       TZ: Asia/Tokyo
       MODEL: llm-jp/llm-jp-13b-instruct-full-ac_001_16x-dolly-ichikara_004_001_single-oasst-oasst2-v2.0 
-      PORT: 3003
-      CORES: 6-9
+      PORT: 3002
+      CORES: 4-7
   
   swallow-mx:
     <<: *common
     container_name: swallow-mx
     ports:
-      - "3004:3004"
+      - "3003:3003"
     environment:
       TZ: Asia/Tokyo
       MODEL: tokyotech-llm/Swallow-MX-8x7b-NVE-v0.1
-      PORT: 3004
-      CORES: 10-17
+      PORT: 3003
+      CORES: 8-15
       TENSOR_PARALLEL_SIZE: 8
 
   calm:
     container_name: calm
     ports:
-      - "3005:3005"
+      - "3004:3004"
     environment:
       TZ: Asia/Tokyo
       MODEL: cyberagent/calm3-22b-chat
-      PORT: 3005
-      CORES: 18-23
+      PORT: 3004
+      CORES: 16-23
 
 volumes:
   neuron_compile_cache:
