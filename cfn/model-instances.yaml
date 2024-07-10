@@ -43,6 +43,6 @@ Resources:
         KeyName: !Ref KeyName
         InstanceType: inf2.48xlarge
         BlockDeviceName: "/dev/sda1"
-        VolumeSize: 512
+        VolumeSize: 1024
         VolumeType: gp3
         TagName: model-2
