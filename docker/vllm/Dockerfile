@@ -22,7 +22,7 @@ RUN set -ex; \
     pip install .
 
 FROM base
-COPY --from=transformers-neuronx-builder /usr/local/lib/python3.10/site-packages/transformers_neuronx /usr/local/lib/python3.10/site-packages/transformers_neuronx
-COPY --from=vllm-builder /usr/local/lib/python3.10/site-packages/vllm /usr/local/lib/python3.10/site-packages/vllm
+COPY --from=transformers-neuronx-builder /opt/conda/lib/python3.10/site-packages/transformers_neuronx /opt/conda/lib/python3.10/site-packages/transformers_neuronx
+COPY --from=vllm-builder /opt/conda/lib/python3.10/site-packages/vllm /opt/conda/lib/python3.10/site-packages/vllm
 COPY entrypoint.sh /app/entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
