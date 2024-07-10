@@ -1,6 +1,6 @@
 {
     "meta-llama-3-8b-instruct": {
-        "model_name": "meta-llama/Meta-Llama-3-8B-Instruct",
+        "model_name": "meta-llama-3-8b-instruct",
         "api_type": "openai",
         "api_base": "http://litellm:4000/v1",
         "api_key": "sk-******",
@@ -13,7 +13,7 @@
         "vision-arena": false
     },
     "calm3-22b-chat": {
-        "model_name": "cyberagent/calm3-22b-chat",
+        "model_name": "calm3-22b-chat",
         "api_type": "openai",
         "api_base": "http://litellm:4000/v1",
         "api_key": "sk-******",
@@ -26,7 +26,7 @@
         "vision-arena": false
     },
     "llama-3-elyza-jp-8b": {
-        "model_name": "elyza/Llama-3-ELYZA-JP-8B",
+        "model_name": "llama-3-elyza-jp-8b",
         "api_type": "openai",
         "api_base": "http://litellm:4000/v1",
         "api_key": "sk-******",
@@ -39,7 +39,7 @@
         "vision-arena": false
     },
     "llm-jp-13b-instruct-full-ac_001_16x-dolly-ichikara_004_001_single-oasst-oasst2-v2.0": {
-        "model_name": "llm-jp/llm-jp-13b-instruct-full-ac_001_16x-dolly-ichikara_004_001_single-oasst-oasst2-v2.0",
+        "model_name": "llm-jp-13b-instruct-full-ac_001_16x-dolly-ichikara_004_001_single-oasst-oasst2-v2.0",
         "api_type": "openai",
         "api_base": "http://litellm:4000/v1",
         "api_key": "sk-******",
@@ -52,7 +52,7 @@
         "vision-arena": false
     },
     "llama-3-swallow-8b-instruct-v0.1": {
-        "model_name": "tokyotech-llm/Llama-3-Swallow-8B-Instruct-v0.1",
+        "model_name": "llama-3-swallow-8b-instruct-v0.1",
         "api_type": "openai",
         "api_base": "http://litellm:4000/v1",
         "api_key": "sk-******",
@@ -65,7 +65,7 @@
         "vision-arena": false
     },
     "swallow-ms-7b-instruct-v0.1": {
-        "model_name": "tokyotech-llm/Swallow-MS-7b-instruct-v0.1",
+        "model_name": "swallow-ms-7b-instruct-v0.1",
         "api_type": "openai",
         "api_base": "http://litellm:4000/v1",
         "api_key": "sk-******",
@@ -78,7 +78,7 @@
         "vision-arena": false
     },
     "swallow-mx-8x7b-nve-v0.1": {
-        "model_name": "tokyotech-llm/Swallow-MX-8x7b-NVE-v0.1",
+        "model_name": "swallow-mx-8x7b-nve-v0.1",
         "api_type": "openai",
         "api_base": "http://litellm:4000/v1",
         "api_key": "sk-******",
@@ -91,7 +91,7 @@
         "vision-arena": false
     },
     "llama-3-swallow-70b-instruct-v0.1": {
-        "model_name": "tokyotech-llm/Llama-3-Swallow-70B-Instruct-v0.1",
+        "model_name": "llama-3-swallow-70b-instruct-v0.1",
         "api_type": "openai",
         "api_base": "http://litellm:4000/v1",
         "api_key": "sk-******",
