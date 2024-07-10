@@ -67,10 +67,10 @@ services:
       MODEL: tokyotech-llm/Swallow-MX-8x7b-NVE-v0.1
       PORT: 3003
       CORES: 8-15
-      TENSOR_PARALLEL_SIZE: 8
       CHAT_TEMPLATE: chat_template/mixtral.jinja
 
   calm:
+    <<: *common
     container_name: calm
     ports:
       - "3004:3004"
