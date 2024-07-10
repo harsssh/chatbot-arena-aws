@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 FROM python:3.11-bookworm AS builder
 COPY requirements.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt
