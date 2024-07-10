@@ -43,7 +43,7 @@ services:
       - "3001:3001"
     environment:
       TZ: Asia/Tokyo
-      MODEL: tokyotech-llm/Swallow-MS-7b-instruct-v0.1
+      MODEL: meta-llama/Meta-Llama-3-8B-Instruct
       PORT: 3001
       CORES: 2-3
 
