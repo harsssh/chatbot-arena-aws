@@ -19,7 +19,7 @@ services:
       - -m
       - fastchat.serve.gradio_web_server_multi
       - --host
-      - 0.0.0.0
+      - '0.0.0.0'
       - --port
       - '8080'
       - --controller-url
@@ -29,6 +29,8 @@ services:
       - --gradio-auth-path
       - /app/gradio_auth
       - --show-terms-of-use
+      - --concurrency-count
+      - '20'
     
   caddy:
     container_name: caddy
