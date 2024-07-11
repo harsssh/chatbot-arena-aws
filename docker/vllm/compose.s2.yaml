@@ -34,7 +34,7 @@ services:
       TZ: Asia/Tokyo
       MODEL: tokyotech-llm/Llama-3-Swallow-70B-Instruct-v0.1
       PORT: 3000
-      CORES: 0-19
+      CORES: 0-15
       TENSOR_PARALLEL_SIZE: 16
 
   swallow-8b:
@@ -46,7 +46,7 @@ services:
       TZ: Asia/Tokyo
       MODEL: tokyotech-llm/Llama-3-Swallow-8B-Instruct-v0.1 
       PORT: 3001
-      CORES: 20-21
+      CORES: 16-17
 
   swallow-ms:
     <<: *common
@@ -57,7 +57,7 @@ services:
       TZ: Asia/Tokyo
       MODEL: tokyotech-llm/Swallow-MS-7b-instruct-v0.1
       PORT: 3002
-      CORES: 22-23
+      CORES: 18-19
 
 volumes:
   neuron_compile_cache:
