@@ -28,6 +28,7 @@ services:
       - /app/api_endpoints.json
       - --gradio-auth-path
       - /app/gradio_auth
+      - --show-terms-of-use
     
   caddy:
     container_name: caddy
