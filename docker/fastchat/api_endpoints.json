@@ -2,7 +2,7 @@
     "meta-llama-3-8b-instruct": {
         "model_name": "meta-llama-3-8b-instruct",
         "api_type": "openai",
-        "api_base": "http://litellm:4000/v1",
+        "api_base": "http://litellm:4000",
         "api_key": "sk-******",
         "anony_only": false,
         "recommended_config": {
@@ -15,7 +15,7 @@
     "calm3-22b-chat": {
         "model_name": "calm3-22b-chat",
         "api_type": "openai",
-        "api_base": "http://litellm:4000/v1",
+        "api_base": "http://litellm:4000",
         "api_key": "sk-******",
         "anony_only": false,
         "recommended_config": {
@@ -28,7 +28,7 @@
     "llama-3-elyza-jp-8b": {
         "model_name": "llama-3-elyza-jp-8b",
         "api_type": "openai",
-        "api_base": "http://litellm:4000/v1",
+        "api_base": "http://litellm:4000",
         "api_key": "sk-******",
         "anony_only": false,
         "recommended_config": {
@@ -41,7 +41,7 @@
     "llm-jp-13b-instruct-full-ac_001_16x-dolly-ichikara_004_001_single-oasst-oasst2-v2.0": {
         "model_name": "llm-jp-13b-instruct-full-ac_001_16x-dolly-ichikara_004_001_single-oasst-oasst2-v2.0",
         "api_type": "openai",
-        "api_base": "http://litellm:4000/v1",
+        "api_base": "http://litellm:4000",
         "api_key": "sk-******",
         "anony_only": false,
         "recommended_config": {
@@ -54,7 +54,7 @@
     "llama-3-swallow-8b-instruct-v0.1": {
         "model_name": "llama-3-swallow-8b-instruct-v0.1",
         "api_type": "openai",
-        "api_base": "http://litellm:4000/v1",
+        "api_base": "http://litellm:4000",
         "api_key": "sk-******",
         "anony_only": false,
         "recommended_config": {
@@ -67,7 +67,7 @@
     "swallow-ms-7b-instruct-v0.1": {
         "model_name": "swallow-ms-7b-instruct-v0.1",
         "api_type": "openai",
-        "api_base": "http://litellm:4000/v1",
+        "api_base": "http://litellm:4000",
         "api_key": "sk-******",
         "anony_only": false,
         "recommended_config": {
@@ -80,7 +80,7 @@
     "swallow-mx-8x7b-nve-v0.1": {
         "model_name": "swallow-mx-8x7b-nve-v0.1",
         "api_type": "openai",
-        "api_base": "http://litellm:4000/v1",
+        "api_base": "http://litellm:4000",
         "api_key": "sk-******",
         "anony_only": false,
         "recommended_config": {
@@ -93,7 +93,7 @@
     "llama-3-swallow-70b-instruct-v0.1": {
         "model_name": "llama-3-swallow-70b-instruct-v0.1",
         "api_type": "openai",
-        "api_base": "http://litellm:4000/v1",
+        "api_base": "http://litellm:4000",
         "api_key": "sk-******",
         "anony_only": false,
         "recommended_config": {
