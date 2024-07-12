@@ -1,7 +1,5 @@
 {$SITE_ADDRESS}
 handle_path /api/* {
-  reverse_proxy http://litellm:4000 {
-    header_up Host {upstream_hostport}
-  }
+  reverse_proxy litellm:4000
 }
 reverse_proxy http://ui:8080
