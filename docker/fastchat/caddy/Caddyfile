@@ -1,5 +1,15 @@
 {$SITE_ADDRESS}
+root /flags
+@maintenance file maintenance
+
 handle_path /api/* {
+  handle @maintenance {
+    respond `{"message": "Service is under maintenance"}` 503
+  }
   reverse_proxy litellm:4000
+}
+
+handle @maintenance {
+  respond "Service is under maintenance" 503
 }
 reverse_proxy http://ui:8080
