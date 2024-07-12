@@ -1,6 +1,6 @@
 {$SITE_ADDRESS}
-root /flags
-@maintenance file maintenance
+root /srv
+@maintenance file maintenance.flag
 
 handle_path /api/* {
   handle @maintenance {
